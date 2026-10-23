@@ -6,6 +6,7 @@ cd "$(dirname "$0")"
 mkdir -p build
 swiftc -o build/harness \
   Sources/SVGPath.swift Sources/MenuBarIcon.swift Sources/SystemState.swift \
-  Sources/Caffeinate.swift Sources/Notifier.swift Sources/HotKey.swift Sources/AppState.swift \
+  Sources/Caffeinate.swift Sources/Notifier.swift Sources/HotKey.swift \
+  Sources/SleepHistory.swift Sources/AppState.swift \
   Tests/main.swift
 ./build/harness

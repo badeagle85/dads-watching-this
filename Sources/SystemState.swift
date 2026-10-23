@@ -98,11 +98,18 @@ enum SessionScanner {
         let rows = runProcessList()
         let claudePIDs = Set(rows.filter { $0.command.hasSuffix("claude") }.map(\.pid))
 
-        let sessions: [ClaudeSession] = rows.compactMap { row in
-            guard claudePIDs.contains(row.pid), !claudePIDs.contains(row.parentPID) else { return nil }
-            guard let parent = rows.first(where: { $0.pid == row.parentPID }),
-                  shellNames.contains(parent.command) else { return nil }
-            return ClaudeSession(pid: row.pid, name: workingDirectoryName(of: row.pid), startedAt: row.startedAt)
+        let topLevel = rows.filter { row in
+            guard claudePIDs.contains(row.pid), !claudePIDs.contains(row.parentPID) else { return false }
+            guard let parent = rows.first(where: { $0.pid == row.parentPID }) else { return false }
+            return shellNames.contains(parent.command)
+        }
+
+        // lsof 는 PID 를 한꺼번에 받는다 — 세션마다 띄우면 프로세스가 그 수만큼 생긴다
+        let directories = workingDirectories(of: topLevel.map(\.pid))
+        let sessions = topLevel.map { row in
+            ClaudeSession(pid: row.pid,
+                          name: directories[row.pid] ?? "PID \(row.pid)",
+                          startedAt: row.startedAt)
         }
 
         let sorted = sessions.sorted { $0.startedAt > $1.startedAt }
@@ -147,25 +154,44 @@ enum SessionScanner {
         return days * 86_400 + seconds
     }
 
-    private static func workingDirectoryName(of pid: Int32) -> String {
-        guard let output = shell("/usr/sbin/lsof", ["-a", "-d", "cwd", "-p", String(pid), "-Fn"]) else {
-            return "PID \(pid)"
+    /// PID → 작업 폴더 이름. `lsof` 를 **한 번만** 부른다.
+    private static func workingDirectories(of pids: [Int32]) -> [Int32: String] {
+        guard !pids.isEmpty else { return [:] }
+        let joined = pids.map(String.init).joined(separator: ",")
+        guard let output = shell("/usr/sbin/lsof", ["-a", "-d", "cwd", "-p", joined, "-Fpn"]) else { return [:] }
+
+        var directories: [Int32: String] = [:]
+        var currentPID: Int32?
+        for line in output.split(separator: "\n") {
+            if line.hasPrefix("p") {
+                currentPID = Int32(line.dropFirst())
+                continue
+            }
+            guard line.hasPrefix("n"), let pid = currentPID else { continue }
+            let path = line.dropFirst()
+            guard let last = path.split(separator: "/").last else { continue }
+            directories[pid] = String(last)
         }
-        let path = output.split(separator: "\n").first(where: { $0.hasPrefix("n") }).map { String($0.dropFirst()) }
-        guard let path, let last = path.split(separator: "/").last else { return "PID \(pid)" }
-        return String(last)
+        return directories
     }
 
-    private static func shell(_ launchPath: String, _ arguments: [String]) -> String? {
+    static func shell(_ launchPath: String, _ arguments: [String]) -> String? {
         let process = Process()
         process.executableURL = URL(fileURLWithPath: launchPath)
         process.arguments = arguments
         let pipe = Pipe()
         process.standardOutput = pipe
         process.standardError = FileHandle.nullDevice
-        do { try process.run() } catch { return nil }
+        do {
+            try process.run()
+        } catch {
+            NSLog("\(launchPath) 실행 실패: \(error.localizedDescription)")
+            return nil
+        }
         let data = pipe.fileHandleForReading.readDataToEndOfFile()
         process.waitUntilExit()
+        // 명시적으로 닫지 않으면 읽기 쪽 디스크립터가 쌓인다
+        try? pipe.fileHandleForReading.close()
         return String(data: data, encoding: .utf8)
     }
 }

@@ -195,11 +195,21 @@ final class AppState: ObservableObject {
         warning = notifier.isAuthorized ? nil : notifier.pendingWarning
     }
 
-    /// 유지 중에 맥이 잠들었다 깨어났다 = 자리를 비운 사이 끊겼다는 뜻 (케이스 30).
+    /**
+     유지 중에 맥이 잠들었다 깨어났다 = 자리를 비운 사이 끊겼다는 뜻 (케이스 30).
+
+     사유는 `pmset -g log` 에만 있고 읽는 데 1초가 넘으므로 백그라운드에서 찾는다.
+     */
     private func recordSleep() {
         guard caffeinate.isRunning else { return }
-        let time = DateFormatter.localizedString(from: Date(), dateStyle: .none, timeStyle: .short)
-        sleptWhileAwayNote = "\(time) 에 잠들었다 깨어났다"
+        let wokeAt = Date()
+        let fallback = DateFormatter.localizedString(from: wokeAt, dateStyle: .none, timeStyle: .short)
+        sleptWhileAwayNote = "\(fallback) 에 잠들었다 깨어났다"
+
+        Task.detached(priority: .utility) {
+            guard let event = SleepHistory.lastRealSleep(before: wokeAt) else { return }
+            await MainActor.run { self.sleptWhileAwayNote = event.noteText }
+        }
     }
 
     /**

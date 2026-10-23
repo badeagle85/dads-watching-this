@@ -74,6 +74,9 @@ func run() async -> Int32 {
                   state.recentSessions.count + state.olderSessions.count == state.sessions.count)
     let labels = state.sessions.map(state.menuLabel(for:))
     harness.check("#15 라벨이 서로 다르다", Set(labels).count == labels.count, labels.joined(separator: " / "))
+    harness.check("#14 세션 이름이 PID 대신 폴더명으로 잡힌다",
+                  state.sessions.contains { !$0.name.hasPrefix("PID ") },
+                  state.sessions.map(\.name).joined(separator: ", "))
 
     print("\n── 뚜껑 설정 읽기 (케이스 7·24) ──")
     harness.check("#7 ioreg 값과 앱이 읽은 값이 같다",
@@ -122,6 +125,23 @@ func run() async -> Int32 {
     await wait(1.0)
     harness.check("#12 세션이 끝나면 자동 해제", state.state == .sleeping)
     harness.check("#12 caffeinate 도 사라진다", caffeinateArguments().isEmpty)
+
+    print("\n── 끊김 이력 (케이스 30, G2-A) ──")
+    let idleLine = "2026-10-22 15:04:06 +0900 Sleep               \tEntering Sleep state due to 'Idle Sleep':TCPKeepAlive=active Using AC (Charge:100%) 286 secs"
+    let parsed = SleepHistory.parse(idleLine)
+    harness.check("#30 로그 한 줄에서 사유를 읽는다", parsed?.reason == "오래 안 써서", parsed?.reason ?? "nil")
+    harness.check("#30 시각도 읽는다", parsed != nil && parsed!.date.timeIntervalSince1970 > 0)
+
+    let clamshell = "2026-10-21 18:02:11 +0900 Sleep               \tEntering Sleep state due to 'Clamshell Sleep': Using Batt (Charge:88%)"
+    harness.check("#30 뚜껑 닫힘을 한국어로", SleepHistory.parse(clamshell)?.reason == "뚜껑 닫힘")
+    harness.check("#30 사유 없는 줄은 걸러낸다", SleepHistory.parse("2026-10-22 15:04:06 +0900 Wake   something") == nil)
+
+    let found = SleepHistory.lastRealSleep(before: Date())
+    harness.check("#30 실제 로그에서 마지막 잠을 찾는다", found != nil, "못 찾음")
+    if let found {
+        harness.check("#30 유지보수 잠은 제외된다", found.reason != "유지보수", found.reason)
+        print("     → 마지막 잠: \(found.noteText)")
+    }
 
     print("\n── 아이콘 (상태 정의 3×2) ──")
     let states: [AwakeState] = [.sleeping, .awake, .keepingSession]
