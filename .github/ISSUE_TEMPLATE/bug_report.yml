@@ -1,0 +1,67 @@
+name: 버그 신고
+description: 동작이 이상하거나 기대와 다를 때
+title: "[버그] "
+labels: ["bug"]
+body:
+  - type: checkboxes
+    attributes:
+      label: 먼저 확인
+      options:
+        - label: 같은 내용의 이슈가 이미 있는지 찾아봤다 (닫힌 이슈 포함)
+          required: true
+  - type: textarea
+    attributes:
+      label: 무슨 일이 일어났나
+      placeholder: 기대한 동작과 실제 동작을 적어 주세요.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: 재현 방법
+      placeholder: |
+        1. 메뉴바 아이콘을 누른다
+        2. '세션이 끝날 때까지' 에서 ... 를 고른다
+        3. ...
+    validations:
+      required: true
+  - type: dropdown
+    attributes:
+      label: 그때 메뉴바 아이콘은
+      options:
+        - 윤곽 (잔다)
+        - 윤곽 + 파동 (안 잔다)
+        - 채움 + 파동 (세션 지키는 중)
+        - 아이콘이 안 보였다
+        - 기억 안 남
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: 진단 정보
+      description: |
+        아래 명령을 터미널에 붙여넣고 결과를 그대로 올려 주세요. 개인정보는 들어가지 않습니다.
+      value: |
+        <details><summary>진단 결과</summary>
+
+        ```
+        $ sw_vers -productVersion
+
+        $ /usr/sbin/ioreg -n IOPMrootDomain -r -d 1 | grep SleepDisabled
+
+        $ pgrep -fl caffeinate
+
+        ```
+        </details>
+    validations:
+      required: true
+  - type: input
+    id: app_version
+    attributes:
+      label: 앱 버전
+      placeholder: "예: 0.1"
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: 그 밖에
+      placeholder: 스크린샷, 화면 녹화, 크래시 로그 등

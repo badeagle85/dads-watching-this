@@ -1,0 +1,40 @@
+name: 기능 제안
+description: 이런 게 있으면 좋겠다
+title: "[제안] "
+labels: ["enhancement"]
+body:
+  - type: checkboxes
+    attributes:
+      label: 먼저 확인
+      options:
+        - label: 같은 제안이 이미 있는지 찾아봤다 (닫힌 이슈 포함)
+          required: true
+  - type: textarea
+    attributes:
+      label: 어떤 상황에서 불편했나
+      description: 기능보다 **문제**를 먼저 적어 주세요. 같은 문제를 다른 방법으로 풀 수도 있습니다.
+      placeholder: |
+        예) 세션을 여러 개 띄워 두는데, 하나가 끝나면 유지가 풀려서 남은 세션이 끊긴다.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: 어떻게 됐으면 하나
+      placeholder: 생각하는 동작이 있으면 적어 주세요.
+    validations:
+      required: true
+  - type: dropdown
+    attributes:
+      label: 어디에 들어가면 좋을까
+      options:
+        - 메뉴바 아이콘
+        - 메뉴 항목
+        - 알림
+        - 뚜껑 닫힘 안내 창
+        - 그 밖에 / 모르겠다
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: 지금은 어떻게 하고 있나
+      placeholder: 다른 앱을 쓰거나 터미널 명령으로 때우고 있다면 적어 주세요.
