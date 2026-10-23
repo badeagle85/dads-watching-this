@@ -16,6 +16,7 @@ swiftc -parse-as-library -O \
   Sources/*.swift
 
 cp Resources/Info.plist "$APP/Contents/Info.plist"
+cp Resources/AppIcon.icns "$APP/Contents/Resources/AppIcon.icns"
 printf 'APPL????' > "$APP/Contents/PkgInfo"
 
 # 애드혹 서명 — 알림·전역 단축키가 번들 신원을 요구한다

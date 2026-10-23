@@ -23,23 +23,23 @@ enum MenuBarIcon {
     private static let strokeWidth: CGFloat = 1.6
 
     /// 윤곽: 바깥 테와 안쪽 테를 evenodd 로 겹쳐 링을 만든다
-    private static let bodyOutlineData = """
+    static let bodyOutlineData = """
     M7.5 3.6H10.5Q14.3 3.6 14.1 6.6L12.6 17.6Q12.4 20.4 9.8 20.4H8.2Q5.6 20.4 5.4 17.6L3.9 6.6Q3.7 3.6 7.5 3.6Z \
     M7.5 5.2H10.5Q12.6 5.2 12.5 6.6L11 17.5Q10.9 18.8 9.8 18.8H8.2Q7.1 18.8 7 17.5L5.5 6.6Q5.4 5.2 7.5 5.2Z
     """
 
     /// 채움: 본체와 버튼을 한 path 로 합쳐 evenodd 로 구멍을 뚫는다
-    private static let bodyFilledData = """
+    static let bodyFilledData = """
     M7.5 3.6H10.5Q14.3 3.6 14.1 6.6L12.6 17.6Q12.4 20.4 9.8 20.4H8.2Q5.6 20.4 5.4 17.6L3.9 6.6Q3.7 3.6 7.5 3.6Z \
     M8.2 6.2H9.8V8.8H8.2Z M7 7.4C5.4 9.6 6.8 12 9 12C11.2 12 12.6 9.6 11 7.4L10.1 8.7C10.9 9.8 9.9 10.4 9 10.4C8.1 10.4 7.1 9.8 7.9 8.7ZM8.2 13.8H9.8A.8 .8 0 0 1 9.8 15.4H8.2A.8 .8 0 0 1 8.2 13.8Z
     """
 
     /// 전원 기호와 버튼 — 윤곽 버전에서는 채워서 그린다
-    private static let controlsData = """
+    static let controlsData = """
     M8.2 6.2H9.8V8.8H8.2Z M7 7.4C5.4 9.6 6.8 12 9 12C11.2 12 12.6 9.6 11 7.4L10.1 8.7C10.9 9.8 9.9 10.4 9 10.4C8.1 10.4 7.1 9.8 7.9 8.7ZM8.2 13.8H9.8A.8 .8 0 0 1 9.8 15.4H8.2A.8 .8 0 0 1 8.2 13.8Z
     """
 
-    private static let wavesData = "M15.7 8.6Q18 10.9 15.7 13.2M18.4 6.4Q22.3 10.9 18.4 15.4"
+    static let wavesData = "M15.7 8.6Q18 10.9 15.7 13.2M18.4 6.4Q22.3 10.9 18.4 15.4"
     private static let warningBorderRect = NSRect(x: 1, y: 1, width: 22, height: 22)
     private static let warningBorderRadius: CGFloat = 5
 

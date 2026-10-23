@@ -6,6 +6,8 @@
 	<string>ko</string>
 	<key>CFBundleExecutable</key>
 	<string>DadsWatchingThis</string>
+	<key>CFBundleIconFile</key>
+	<string>AppIcon</string>
 	<key>CFBundleIdentifier</key>
 	<string>com.sanghun.DadsWatchingThis</string>
 	<key>CFBundleInfoDictionaryVersion</key>
