@@ -132,6 +132,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         lidItem.toolTip = "맥 시스템 설정이다. 누르면 안내 창이 열리고, 바꿀 때 macOS 가 암호를 묻는다."
         menu.addItem(lidItem)
 
+        let loginItem = checkItem("로그인할 때 자동 실행",
+                                  isOn: state.isLoginItemEnabled,
+                                  action: #selector(handleLoginItemToggle))
+        loginItem.toolTip = "시스템 설정 ▸ 일반 ▸ 로그인 항목에서도 보인다."
+        menu.addItem(loginItem)
+
         menu.addItem(elapsedDisplayItem())
 
         menu.addItem(.separator())
@@ -236,6 +242,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         state.elapsedDisplay = display
     }
 
+    @objc private func handleLoginItemToggle() { state.toggleLoginItem() }
     @objc private func handleLeaveNow() { state.leaveNow() }
     @objc private func handleBatteryToggle() { state.releasesOnLowBattery.toggle() }
     @objc private func handleLidClick() { LidWindow.shared.show(state: state) }

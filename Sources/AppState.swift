@@ -46,6 +46,9 @@ final class AppState: ObservableObject {
         didSet { UserDefaults.standard.set(releasesOnLowBattery, forKey: Key.releasesOnLowBattery) }
     }
 
+    /// 로그인할 때 자동 실행 (B4). 값은 시스템이 들고 있으므로 UserDefaults 에 저장하지 않는다.
+    @Published private(set) var isLoginItemEnabled = LoginItem.isEnabled
+
     /// 메뉴바에 경과 시간을 어떻게 보일지 (B2). 메뉴 안에서는 설정과 무관하게 늘 초까지 보인다.
     @Published var elapsedDisplay: ElapsedDisplay {
         didSet {
@@ -115,8 +118,15 @@ final class AppState: ObservableObject {
     /// 메뉴를 여는 순간에만 읽는다 (케이스 7·14, G1).
     func refreshForMenuOpen() {
         isLidSettingOn = LidSleepSetting.isOn
+        isLoginItemEnabled = LoginItem.isEnabled
         sessions = SessionScanner.scan(withinRecentWindow: false)
         warning = nil
+    }
+
+    func toggleLoginItem() {
+        let failure = LoginItem.setEnabled(!isLoginItemEnabled)
+        isLoginItemEnabled = LoginItem.isEnabled
+        warning = failure.map { "로그인 항목을 바꾸지 못했다 — \($0)" }
     }
 
     func refreshLidSetting() {

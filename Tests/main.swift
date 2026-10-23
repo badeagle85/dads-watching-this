@@ -126,6 +126,9 @@ func run() async -> Int32 {
     harness.check("#12 세션이 끝나면 자동 해제", state.state == .sleeping)
     harness.check("#12 caffeinate 도 사라진다", caffeinateArguments().isEmpty)
 
+    print("\n── 로그인 항목 (B4) ──")
+    harness.check("#B4 상태를 읽을 수 있다", state.isLoginItemEnabled == LoginItem.isEnabled)
+
     print("\n── 끊김 이력 (케이스 30, G2-A) ──")
     let idleLine = "2026-10-22 15:04:06 +0900 Sleep               \tEntering Sleep state due to 'Idle Sleep':TCPKeepAlive=active Using AC (Charge:100%) 286 secs"
     let parsed = SleepHistory.parse(idleLine)

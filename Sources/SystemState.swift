@@ -1,6 +1,7 @@
 import Foundation
 import IOKit
 import IOKit.ps
+import ServiceManagement
 
 /// 뚜껑 닫힘 설정. 값은 `ioreg` 로 읽고, 바꿀 때는 macOS 가 암호를 받는다 (G3-A').
 enum LidSleepSetting {
@@ -33,6 +34,32 @@ enum LidSleepSetting {
         defer { IOObjectRelease(service) }
         let value = IORegistryEntryCreateCFProperty(service, "SleepDisabled" as CFString, kCFAllocatorDefault, 0)
         return (value?.takeRetainedValue() as? Bool) ?? false
+    }
+}
+
+/**
+ 로그인할 때 자동 실행 (B4).
+
+ `SMAppService` 는 macOS 13 부터 쓸 수 있고 별도 헬퍼 번들이 필요 없다.
+ 켜고 끄는 것은 시스템 설정 ▸ 일반 ▸ 로그인 항목에도 그대로 보인다.
+ */
+enum LoginItem {
+    static var isEnabled: Bool {
+        SMAppService.mainApp.status == .enabled
+    }
+
+    /// 바꾸지 못하면 이유를 돌려준다. 성공하면 nil.
+    static func setEnabled(_ shouldEnable: Bool) -> String? {
+        do {
+            if shouldEnable {
+                try SMAppService.mainApp.register()
+            } else {
+                try SMAppService.mainApp.unregister()
+            }
+            return nil
+        } catch {
+            return error.localizedDescription
+        }
     }
 }
 
