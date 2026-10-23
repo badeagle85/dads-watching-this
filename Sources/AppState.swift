@@ -129,6 +129,21 @@ final class AppState: ObservableObject {
         warning = failure.map { "로그인 항목을 바꾸지 못했다 — \($0)" }
     }
 
+    /// `DWT_SELFTEST=1` 로 띄웠을 때만 돈다. 권한 응답을 기다렸다가 알림 3종을 보낸다.
+    func runNotificationSelfTest() {
+        notifier.requestAuthorizationIfNeeded()
+        notifier.currentStatus { status in
+            NSLog("[자가진단] 알림 권한: %@", status)
+        }
+        Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 3_000_000_000)
+            notifier.currentStatus { status in
+                NSLog("[자가진단] 권한 응답 후: %@", status)
+            }
+            notifier.runSelfTest()
+        }
+    }
+
     func refreshLidSetting() {
         isLidSettingOn = LidSleepSetting.isOn
     }

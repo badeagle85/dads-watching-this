@@ -219,7 +219,8 @@ enum SessionScanner {
         process.waitUntilExit()
         // 명시적으로 닫지 않으면 읽기 쪽 디스크립터가 쌓인다
         try? pipe.fileHandleForReading.close()
-        return String(data: data, encoding: .utf8)
+        // pmset 로그에는 UTF-8 이 아닌 바이트가 섞인다. 엄격하게 디코딩하면 통째로 nil 이 된다
+        return String(decoding: data, as: UTF8.self)
     }
 }
 

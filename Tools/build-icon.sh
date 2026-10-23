@@ -12,8 +12,11 @@ swiftc -O -o build/iconmaker \
   Sources/SVGPath.swift Sources/MenuBarIcon.swift \
   Tools/AppIcon.swift Tools/main.swift
 
-./build/iconmaker "$ICONSET"
+./build/iconmaker iconset "$ICONSET"
 iconutil -c icns "$ICONSET" -o Resources/AppIcon.icns
 rm -rf "$ICONSET"
 
-echo "만들었다: Resources/AppIcon.icns"
+mkdir -p docs/images
+./build/iconmaker readme docs/images
+
+echo "만들었다: Resources/AppIcon.icns · docs/images/*.png"

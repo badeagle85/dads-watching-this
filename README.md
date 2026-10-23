@@ -1,10 +1,48 @@
-# 아빠안잔다 (Dad's Watching This!)
+<div align="center">
 
-AI 세션이 도는 동안 맥을 안 재우는 macOS 메뉴바 앱.
-**지금 지키고 있는지를 아이콘 모양만 보고 안다.**
+<img src="docs/images/app-icon.png" width="128" alt="아빠안잔다">
+
+# 아빠안잔다
+
+**Dad's Watching This!**
+
+AI 세션이 도는 동안 맥을 안 재우는 macOS 메뉴바 앱<br>
+지금 지키고 있는지를 **아이콘 모양만 보고** 안다
+
+<img src="docs/images/state-sleeping.png" width="56" alt="잔다">
+<img src="docs/images/state-awake.png" width="56" alt="안 잔다">
+<img src="docs/images/state-session.png" width="56" alt="세션 지키는 중">
+<img src="docs/images/state-lid.png" width="56" alt="뚜껑 닫아도 안 잔다">
+
+</div>
+
+---
 
 > 자리를 비우면 세션이 살아 있는지 알 수가 없다. 돌아와 보면 끊겨 있고, 언제 끊겼는지도 모른다.
 > 그래서 만들었다.
+
+## 메뉴
+
+```
+잔다
+──────────────────────
+화면 끄고 지키기
+──────────────────────
+언제까지 안 자나
+✓ 끌 때까지
+  30분 / 1시간 / 2시간
+  세션이 끝날 때까지      ▸   makestar · 2시간
+                             commerce-web · 18분
+──────────────────────
+✓ 배터리 20% 밑이면 잔다
+✓ 뚜껑 닫아도 안 잔다…
+  로그인할 때 자동 실행
+  메뉴바 경과 시간        ▸   숨김 / 시:분 / 시:분:초
+──────────────────────
+  이제 잔다
+  아이콘 읽는 법…
+  종료                ⌘Q
+```
 
 ## 무엇이 다른가
 
@@ -17,12 +55,12 @@ AI 세션이 도는 동안 맥을 안 재우는 macOS 메뉴바 앱.
 
 ## 아이콘 읽는 법
 
-| 모양 | 뜻 |
-|---|---|
-| 윤곽 | **잔다** — 아무것도 안 걸렸다 |
-| 윤곽 + 파동 | **안 잔다** — 깨워 두는 중 |
-| 채움 + 파동 | **세션 지키는 중** — 그 세션이 끝나면 풀린다 |
-| **테두리** | 뚜껑 닫힘 시스템 설정이 켜져 있다 (앱과 별개) |
+| | 모양 | 뜻 |
+|:---:|---|---|
+| <img src="docs/images/state-sleeping.png" width="40"> | 윤곽 | **잔다** — 아무것도 안 걸렸다 |
+| <img src="docs/images/state-awake.png" width="40"> | 윤곽 + 파동 | **안 잔다** — 깨워 두는 중 |
+| <img src="docs/images/state-session.png" width="40"> | 채움 + 파동 | **세션 지키는 중** — 그 세션이 끝나면 풀린다 |
+| <img src="docs/images/state-lid.png" width="40"> | **테두리** | 뚜껑 닫힘 시스템 설정이 켜져 있다 (앱과 별개) |
 
 테두리는 세 모양 어디에나 붙는다. 앱 상태와 시스템 설정은 서로 다른 축이다.
 
@@ -81,6 +119,12 @@ open build/DadsWatchingThis.app
 ```
 
 실제로 `caffeinate` 를 띄우고 더미 프로세스를 죽여 보는 식으로 돈다. 테스트 이름은 시나리오 문서의 케이스 번호다.
+
+알림이 안 온다면 자가 진단을 돌려 본다. 권한 상태를 찍고 알림 3종을 보낸 뒤, 알림 센터에 실제로 꽂혔는지 다시 읽어서 알려준다.
+
+```bash
+DWT_SELFTEST=1 /Applications/DadsWatchingThis.app/Contents/MacOS/DadsWatchingThis
+```
 
 ## 만든 방식
 

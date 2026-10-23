@@ -40,6 +40,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             Task { @MainActor in self?.updateStatusItem() }
         }
         updateStatusItem()
+
+        if ProcessInfo.processInfo.environment["DWT_SELFTEST"] != nil {
+            state.runNotificationSelfTest()
+        }
     }
 
     // MARK: 메뉴바 아이콘

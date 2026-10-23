@@ -63,3 +63,51 @@ enum AppIcon {
         try? png.write(to: URL(fileURLWithPath: path))
     }
 }
+
+/// README 에 넣을 메뉴바 아이콘 타일. 실제 메뉴바(밝은 바탕에 검은 실루엣)와 같게 보이게 한다.
+enum StateTile {
+    static let side: CGFloat = 144
+    static let artRatio: CGFloat = 0.62
+
+    static func render(state: AwakeState, border: Bool) -> NSImage {
+        NSImage(size: NSSize(width: side, height: side), flipped: true) { _ in
+            guard let context = NSGraphicsContext.current else { return false }
+
+            let tile = NSBezierPath(roundedRect: NSRect(x: 0, y: 0, width: side, height: side),
+                                    xRadius: side * 0.22, yRadius: side * 0.22)
+            NSColor(srgbRed: 0.93, green: 0.93, blue: 0.94, alpha: 1).setFill()
+            tile.fill()
+
+            let artSize = side * artRatio
+            let scale = artSize / 24
+            context.cgContext.saveGState()
+            context.cgContext.translateBy(x: (side - artSize) / 2, y: (side - artSize) / 2)
+            context.cgContext.scaleBy(x: scale, y: scale)
+
+            let ink = NSColor(srgbRed: 0.11, green: 0.11, blue: 0.12, alpha: 1)
+            ink.setFill()
+            ink.setStroke()
+
+            if state == .keepingSession {
+                SVGPath.bezierPath(from: MenuBarIcon.bodyFilledData).fill()
+            } else {
+                SVGPath.bezierPath(from: MenuBarIcon.bodyOutlineData).fill()
+                SVGPath.bezierPath(from: MenuBarIcon.controlsData).fill()
+            }
+            if state != .sleeping {
+                let waves = SVGPath.bezierPath(from: MenuBarIcon.wavesData)
+                waves.lineWidth = 1.6
+                waves.lineCapStyle = .round
+                waves.stroke()
+            }
+            if border {
+                let frame = NSBezierPath(roundedRect: NSRect(x: 1, y: 1, width: 22, height: 22),
+                                         xRadius: 5, yRadius: 5)
+                frame.lineWidth = 1.6
+                frame.stroke()
+            }
+            context.cgContext.restoreGState()
+            return true
+        }
+    }
+}

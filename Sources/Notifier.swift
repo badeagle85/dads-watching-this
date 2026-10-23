@@ -14,6 +14,47 @@ final class Notifier {
     private(set) var isAuthorized = false
     private var hasAskedAuthorization = false
 
+    /// 지금 권한이 어떤 상태인지 — 자가 진단용
+    func currentStatus(_ completion: @escaping (String) -> Void) {
+        guard Bundle.main.bundleIdentifier != nil else {
+            completion("번들이 아니라 알림을 쓸 수 없다")
+            return
+        }
+        UNUserNotificationCenter.current().getNotificationSettings { settings in
+            let names: [UNAuthorizationStatus: String] = [
+                .notDetermined: "아직 묻지 않음",
+                .denied: "거부됨",
+                .authorized: "허용됨",
+                .provisional: "임시 허용",
+            ]
+            completion(names[settings.authorizationStatus] ?? "알 수 없음")
+        }
+    }
+
+    /// 알림 3종을 차례로 띄워 본다 (`DWT_SELFTEST=1` 로 실행하면 돈다)
+    func runSelfTest() {
+        let samples: [Kind] = [
+            .sessionEnded(name: "자가진단", remaining: 2),
+            .chargerUnplugged(isLidSettingOn: true),
+            .batteryLow(percent: 19, isLidSettingOn: false),
+        ]
+        for (index, kind) in samples.enumerated() {
+            let (title, body) = Self.text(for: kind)
+            NSLog("[자가진단] %d/3 보냄: %@ — %@", index + 1, title, body)
+            deliver(title: title, body: body)
+        }
+
+        // 실제로 알림 센터에 꽂혔는지 확인한다
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            UNUserNotificationCenter.current().getDeliveredNotifications { delivered in
+                NSLog("[자가진단] 알림 센터 도착: %d개", delivered.count)
+                for item in delivered {
+                    NSLog("[자가진단]   · %@ / %@", item.request.content.title, item.request.content.body)
+                }
+            }
+        }
+    }
+
     /// 거부당했을 때를 위해 메뉴 상단에 띄울 한 줄. G4 추천안.
     private(set) var pendingWarning: String?
 
