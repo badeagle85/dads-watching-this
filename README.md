@@ -43,20 +43,36 @@ sudo pmset -a disablesleep 0   # 되돌리기
 
 ## 설치
 
-아직 릴리스 전이다. 소스에서 빌드한다.
+```bash
+brew tap badeagle85/tap
+brew trust badeagle85/tap
+brew install --cask dads-watching-this
+xattr -dr com.apple.quarantine /Applications/DadsWatchingThis.app
+```
+
+> [!IMPORTANT]
+> **네 번째 줄을 앱을 열기 전에 실행해야 한다.**
+> 격리 딱지가 붙은 채로 열면 macOS 가 "열 수 없다" 며 **앱을 지우라고 권하고, 거기서 확인을 누르면 앱이 사라진다.**
+> 그때는 `brew reinstall --cask dads-watching-this` 로 다시 받은 뒤 위 순서대로 하면 된다.
+
+왜 이런 과정이 필요한가 — 이 앱은 **Apple 공증을 받지 않았다.** 공증에는 Apple Developer Program 연 $99 가 든다. 공증 대신 **소스를 전부 공개**하는 쪽을 택했다. 위 명령이 하는 일은 "이 앱은 인터넷에서 받은 것"이라는 표시를 떼는 것뿐이다.
+
+`brew trust` 는 Homebrew 가 공식 저장소 밖의 설치 정의를 쓰기 전에 요구하는 확인이다.
+
+### 직접 빌드하기
+
+**Xcode 는 필요 없다.** Command Line Tools 만 있으면 된다.
 
 ```bash
+xcode-select --install
+
 git clone https://github.com/badeagle85/dads-watching-this.git
 cd dads-watching-this
 ./build.sh
 open build/DadsWatchingThis.app
 ```
 
-**Xcode 는 필요 없다.** Command Line Tools 만 있으면 된다.
-
-```bash
-xcode-select --install
-```
+직접 빌드한 앱에는 격리 딱지가 안 붙으니 위 과정이 필요 없다.
 
 ## 테스트
 
