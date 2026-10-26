@@ -17,7 +17,7 @@ fi
 
 TAP_DIR="../homebrew-tap"
 ZIP="build/release/DadsWatchingThis-$VERSION.zip"
-DMG="build/dmg/DadsWatchingThis-$VERSION.dmg"
+DMG="build/dmg/DadsWatchingThis.dmg"
 BUILD_NUMBER=$(/usr/bin/defaults read "$PWD/Resources/Info.plist" CFBundleVersion)
 NEXT_BUILD=$((BUILD_NUMBER + 1))
 

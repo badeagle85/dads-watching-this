@@ -15,6 +15,8 @@
 ![Apple Silicon](https://img.shields.io/badge/Apple%20Silicon-2d4169?style=flat-square&logo=apple&logoColor=white)
 [![License](https://img.shields.io/github/license/badeagle85/dads-watching-this?style=flat-square&color=2d4169)](LICENSE)
 
+[![다운로드](https://img.shields.io/badge/dmg%20내려받기-2d4169?style=for-the-badge&logo=apple&logoColor=white)](https://github.com/badeagle85/dads-watching-this/releases/latest/download/DadsWatchingThis.dmg)
+
 <table>
 <tr>
 <td align="center"><img src="docs/images/state-sleeping.png" width="54"><br><b>잔다</b><br><sub>안 걸렸다</sub></td>
@@ -50,6 +52,15 @@ Claude Code 를 돌려 놓고 자리를 비우면 **세션이 살아 있는지 �
 
 ## 설치
 
+| | |
+|---|---|
+| **터미널을 쓴다면** | brew — 명령 네 줄 |
+| **터미널은 안 쓴다면** | dmg — 받아서 드래그 |
+
+어느 쪽이든 **처음 한 번만** 손이 가고, 그 뒤로는 앱이 알아서 갱신한다.
+
+### brew 로
+
 ```bash
 brew tap badeagle85/tap
 brew trust badeagle85/tap
@@ -59,8 +70,15 @@ xattr -dr com.apple.quarantine /Applications/DadsWatchingThis.app
 
 > [!IMPORTANT]
 > **네 번째 줄을 앱을 열기 전에 실행해야 한다.** 격리 딱지가 붙은 채로 열면 macOS 가 앱을 지우라고 권하고, 확인을 누르면 앱이 사라진다. 그때는 `brew reinstall --cask dads-watching-this` 로 다시 받는다.
+
+### dmg 로
+
+[**DadsWatchingThis.dmg 내려받기**](https://github.com/badeagle85/dads-watching-this/releases/latest/download/DadsWatchingThis.dmg) → 열어서 앱을 `Applications` 폴더로 드래그.
+
+> [!WARNING]
+> 처음 열면 **"손상됐기 때문에 열 수 없습니다"** 가 뜬다. 공증(연 $99)을 안 받아서 나오는 경고고, 앱이 실제로 손상된 게 아니다.
 >
-> **이 네 줄은 처음 한 번만 필요하다.** 그 뒤로는 앱이 스스로 갱신한다.
+> **`휴지통으로 이동` 을 누르면 앱이 지워진다.** `취소` 를 누른 뒤, 시스템 설정 ▸ 개인정보 보호 및 보안 ▸ 맨 아래 **"그래도 열기"** 를 누르면 된다.
 
 ## 메뉴
 
