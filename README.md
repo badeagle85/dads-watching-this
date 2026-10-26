@@ -25,16 +25,7 @@
 
 ---
 
-## 왜 만들었나
-
-Claude Code 를 돌려 놓고 자리를 비우면 **세션이 살아 있는지 알 수가 없다.** 돌아와 보면 끊겨 있고, 언제 왜 끊겼는지도 모른다.
-
-`caffeinate` 를 감싸는 앱은 이미 여럿 있지만, 전부 **켜짐/꺼짐 두 단계**다. 이 앱은 두 가지를 더 한다.
-
-| | |
-|---|---|
-| **상태가 형태로 보인다** | 메뉴바 아이콘은 색을 못 쓴다(template image). 그래서 윤곽·파동·채움 **세 모양**으로 나눴다 |
-| **세션을 지목한다** | "30분" 이 아니라 **"이 세션이 끝날 때까지"**. 고른 세션이 끝나면 저절로 풀린다 |
+Claude Code 를 돌려 놓고 자리를 비우면 **세션이 살아 있는지 알 수가 없다.** 돌아와 보면 끊겨 있고, 언제 왜 끊겼는지도 모른다. 그래서 만들었다.
 
 ## 설치
 
@@ -120,6 +111,18 @@ xattr -dr com.apple.quarantine /Applications/DadsWatchingThis.app
 ## 자주 묻는 것
 
 <details>
+<summary><b>비슷한 앱이 이미 있지 않나?</b></summary><br>
+
+`caffeinate` 를 감싸는 앱은 여럿 있다. 전부 **켜짐/꺼짐 두 단계**라는 게 차이다.
+
+| | |
+|---|---|
+| **상태가 형태로 보인다** | 메뉴바 아이콘은 색을 못 쓴다(template image). 그래서 윤곽·파동·채움 **세 모양**으로 나눴다 |
+| **세션을 지목한다** | "30분" 이 아니라 **"이 세션이 끝날 때까지"**. 고른 세션이 끝나면 저절로 풀린다 |
+
+</details>
+
+<details>
 <summary><b>어떻게 동작하나?</b></summary><br>
 
 Apple 이 macOS 에 기본으로 넣어 둔 `caffeinate` 명령을 감싼다. 유지를 켜면 이걸 띄운다.
@@ -180,7 +183,7 @@ DWT_SELFTEST=1 /Applications/DadsWatchingThis.app/Contents/MacOS/DadsWatchingThi
 `권한: 거부됨` 이 나오면 시스템 설정 ▸ 알림 에서 켠다.
 </details>
 
-## 개발
+## 직접 빌드하기
 
 **Xcode 는 필요 없다.** Command Line Tools 만 있으면 된다.
 
