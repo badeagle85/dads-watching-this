@@ -17,7 +17,7 @@ fi
 
 TAP_DIR="../homebrew-tap"
 ZIP="build/release/DadsWatchingThis-$VERSION.zip"
-DMG="build/dmg/아빠안잔다-$VERSION.dmg"
+DMG="build/dmg/DadsWatchingThis-$VERSION.dmg"
 BUILD_NUMBER=$(/usr/bin/defaults read "$PWD/Resources/Info.plist" CFBundleVersion)
 NEXT_BUILD=$((BUILD_NUMBER + 1))
 
@@ -68,6 +68,12 @@ if [ -n "$NOTES_FILE" ]; then
   gh release create "v$VERSION" "$ZIP" "$DMG" --title "$TITLE" --notes-file "$NOTES_FILE"
 else
   gh release create "v$VERSION" "$ZIP" "$DMG" --title "$TITLE" --generate-notes
+fi
+
+# 증분 업데이트 파일 — appcast 가 참조하므로 같이 올린다
+DELTAS=$(grep -oE "DadsWatchingThis[0-9]+-[0-9]+\.delta" docs/appcast.xml | sort -u | sed "s|^|build/release/|" | tr "\n" " ")
+if [ -n "$DELTAS" ]; then
+  gh release upload "v$VERSION" $DELTAS --clobber 2>/dev/null || true
 fi
 
 echo "▸ 8/8  brew tap 갱신"
