@@ -7,6 +7,8 @@
 **AI 세션이 도는 동안 맥을 안 재우는 메뉴바 앱**<br>
 지키고 있는지를 아이콘 모양만 보고 안다
 
+<img src="docs/images/banner.png" width="760" alt="소파에서 리모콘을 쥔 채 잠든 아빠 — '아빠 안 잔다…'">
+
 [![Release](https://img.shields.io/github/v/release/badeagle85/dads-watching-this?style=flat-square&color=2d4169)](https://github.com/badeagle85/dads-watching-this/releases/latest)
 [![Downloads](https://img.shields.io/github/downloads/badeagle85/dads-watching-this/total?style=flat-square&color=2d4169)](https://github.com/badeagle85/dads-watching-this/releases)
 ![macOS](https://img.shields.io/badge/macOS-14%2B-2d4169?style=flat-square&logo=apple&logoColor=white)
@@ -75,6 +77,16 @@ xattr -dr com.apple.quarantine /Applications/DadsWatchingThis.app
 전역 단축키 **⌥⌘L** 로 어느 앱에서든 켜고 끈다.
 
 맨 윗줄은 지금 상태다. 메뉴를 열면 설정과 상관없이 **초까지** 보인다.
+
+<br clear="right">
+
+### 세션 지목하기
+
+<img src="docs/images/screenshot-sessions.png" width="280" align="right" alt="세션 목록">
+
+`세션이 끝날 때까지` 에 들어가면 **돌고 있는 Claude Code 세션 목록**이 나온다. 하나를 고르면 그 세션이 끝날 때 유지가 저절로 풀린다.
+
+폴더명과 경과 시간으로 구분하고, 그것까지 같으면 PID 뒷자리를 붙인다. 최근 12시간 안에 띄운 것만, 최대 8개까지 올라온다.
 
 <br clear="right">
 
