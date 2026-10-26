@@ -6,8 +6,10 @@ import SwiftUI
 final class HelpWindow: NSObject {
     static let shared = HelpWindow()
     private var window: NSWindow?
+    private var onCheckUpdate: (() -> Void)?
 
-    func show() {
+    func show(onCheckUpdate: @escaping () -> Void) {
+        self.onCheckUpdate = onCheckUpdate
         let target = window ?? makeWindow()
         window = target
         NSApp.activate(ignoringOtherApps: true)
@@ -15,20 +17,27 @@ final class HelpWindow: NSObject {
     }
 
     private func makeWindow() -> NSWindow {
-        let window = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 460, height: 460),
+        let window = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 460, height: 520),
                               styleMask: [.titled, .closable],
                               backing: .buffered,
                               defer: false)
         window.title = "리모콘 설명서"
         window.isReleasedWhenClosed = false
-        window.contentViewController = NSHostingController(rootView: HelpView())
+        window.contentViewController = NSHostingController(
+            rootView: HelpView(onCheckUpdate: { [weak self] in self?.onCheckUpdate?() }))
         window.center()
         return window
     }
 }
 
 struct HelpView: View {
+    let onCheckUpdate: () -> Void
+
     private static let iconSize: CGFloat = 26
+
+    private var version: String {
+        Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "?"
+    }
 
     var body: some View {
         ScrollView {
@@ -58,16 +67,36 @@ struct HelpView: View {
                         .foregroundStyle(.secondary)
                 }
 
-                Divider()
-
-                Text("메뉴바에서 아이콘이 안 보이면 오른쪽 끝 `»` 안에 접혀 있다. 메뉴바가 좁으면 macOS 가 뒤쪽부터 숨긴다.\n\n자동 업데이트가 켜져 있다. 하루 한 번 새 버전을 확인한다.")
+                Text("메뉴바에서 아이콘이 안 보이면 오른쪽 끝 `»` 안에 접혀 있다. 메뉴바가 좁으면 macOS 가 뒤쪽부터 숨긴다.")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
+
             }
             .padding(24)
         }
-        .frame(width: 460, height: 460)
+        .frame(width: 460)
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+            VStack(spacing: 0) {
+                Divider()
+                HStack {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("아빠안잔다 \(version)")
+                            .font(.callout.weight(.medium))
+                            .textSelection(.enabled)
+                        Text("새 버전은 하루 한 번 알아서 확인한다")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                    Spacer()
+                    Button("업데이트 확인", action: onCheckUpdate)
+                }
+                .padding(.horizontal, 24)
+                .padding(.vertical, 14)
+            }
+            .background(.bar)
+        }
+        .frame(height: 520)
     }
 
     private func section<Content: View>(_ title: String,
