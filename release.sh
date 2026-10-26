@@ -1,0 +1,63 @@
+#!/bin/bash
+# 릴리스 한 번에. 버전만 주면 빌드부터 brew tap 갱신까지 한다.
+#
+#   ./release.sh 0.1.5 "짧은 제목" ["릴리스 노트 파일"]
+#
+set -euo pipefail
+cd "$(dirname "$0")"
+
+VERSION="${1:-}"
+TITLE="${2:-v$1}"
+NOTES_FILE="${3:-}"
+
+if [ -z "$VERSION" ]; then
+  echo "쓰는 법: ./release.sh <버전> [제목] [노트파일]"
+  exit 1
+fi
+
+TAP_DIR="../homebrew-tap"
+ZIP="build/release/DadsWatchingThis-$VERSION.zip"
+BUILD_NUMBER=$(/usr/bin/defaults read "$PWD/Resources/Info.plist" CFBundleVersion)
+NEXT_BUILD=$((BUILD_NUMBER + 1))
+
+echo "▸ 1/7  버전을 $VERSION (빌드 $NEXT_BUILD) 로 올린다"
+/usr/bin/plutil -replace CFBundleShortVersionString -string "$VERSION" Resources/Info.plist
+/usr/bin/plutil -replace CFBundleVersion -string "$NEXT_BUILD" Resources/Info.plist
+
+echo "▸ 2/7  빌드와 테스트"
+./build.sh > /dev/null
+./test.sh | tail -1
+
+echo "▸ 3/7  압축"
+mkdir -p build/release
+ditto -c -k --keepParent build/DadsWatchingThis.app "$ZIP"
+
+echo "▸ 4/7  appcast 서명"
+./Vendor/bin/generate_appcast \
+  --download-url-prefix "https://github.com/badeagle85/dads-watching-this/releases/download/v$VERSION/" \
+  -o docs/appcast.xml build/release 2>&1 | grep -v "mismatch code signing" || true
+
+echo "▸ 5/7  커밋과 태그"
+git add -A
+git commit -q -m "chore: $VERSION"
+git tag "v$VERSION"
+git push -q origin main --tags
+
+echo "▸ 6/7  릴리스 업로드"
+if [ -n "$NOTES_FILE" ]; then
+  gh release create "v$VERSION" "$ZIP" --title "$TITLE" --notes-file "$NOTES_FILE"
+else
+  gh release create "v$VERSION" "$ZIP" --title "$TITLE" --generate-notes
+fi
+
+echo "▸ 7/7  brew tap 갱신"
+SHA=$(shasum -a 256 "$ZIP" | cut -d' ' -f1)
+/usr/bin/sed -i '' "s/version \".*\"/version \"$VERSION\"/" "$TAP_DIR/Casks/dads-watching-this.rb"
+/usr/bin/sed -i '' "s/sha256 \".*\"/sha256 \"$SHA\"/" "$TAP_DIR/Casks/dads-watching-this.rb"
+git -C "$TAP_DIR" add -A
+git -C "$TAP_DIR" commit -q -m "chore: 아빠안잔다 $VERSION"
+git -C "$TAP_DIR" push -q origin main
+
+echo ""
+echo "끝났다. https://github.com/badeagle85/dads-watching-this/releases/tag/v$VERSION"
+echo "appcast 는 GitHub Pages 가 반영할 때까지 1~2분 걸린다."

@@ -177,7 +177,14 @@ cd dads-watching-this
 ./build.sh && open build/DadsWatchingThis.app
 ```
 
-`./test.sh` 로 테스트 40개, `./Tools/build-icon.sh` 로 아이콘을 다시 만든다. 직접 빌드한 앱에는 격리 딱지가 안 붙어 `xattr` 이 필요 없다.
+| 스크립트 | 하는 일 |
+|---|---|
+| `./build.sh` | `.app` 빌드 |
+| `./test.sh` | 테스트 40개 |
+| `./Tools/build-icon.sh` | 아이콘·README 이미지 다시 만들기 |
+| `./release.sh <버전>` | 빌드 → 테스트 → 압축 → appcast 서명 → 태그 → 릴리스 → brew tap 갱신 |
+
+직접 빌드한 앱에는 격리 딱지가 안 붙어 `xattr` 이 필요 없다.
 
 의존성이 **없다.** 아이콘도 SVG 경로를 코드에서 그리고, 세션 종료는 `DispatchSource` 커널 이벤트로 받아 폴링하지 않는다.
 
