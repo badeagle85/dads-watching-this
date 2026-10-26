@@ -20,7 +20,7 @@ enum KeepAwakeMode: Equatable {
     case session(pid: Int32, name: String)
 
     var menuTitle: String {
-        if case .indefinite = self { return "내가 끌 때까지" }
+        if case .indefinite = self { return "계속 본다" }
         if case let .duration(seconds) = self { return Self.durationTitle(seconds) }
         if case let .session(_, name) = self { return name }
         return ""

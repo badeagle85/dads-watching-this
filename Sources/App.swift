@@ -115,7 +115,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
         // 다섯 항목이 한 질문의 답이라는 걸 제목으로 보인다
         menu.addItem(.sectionHeader(title: "언제까지 안 자나"))
-        menu.addItem(modeItem("내가 끌 때까지", mode: .indefinite))
+        menu.addItem(modeItem("계속 본다", mode: .indefinite))
         for seconds in AppState.durationChoices {
             menu.addItem(modeItem(KeepAwakeMode.durationTitle(seconds), mode: .duration(seconds)))
         }
