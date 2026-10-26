@@ -20,7 +20,7 @@ enum KeepAwakeMode: Equatable {
     case session(pid: Int32, name: String)
 
     var menuTitle: String {
-        if case .indefinite = self { return "끌 때까지" }
+        if case .indefinite = self { return "내가 끌 때까지" }
         if case let .duration(seconds) = self { return Self.durationTitle(seconds) }
         if case let .session(_, name) = self { return name }
         return ""
@@ -28,7 +28,7 @@ enum KeepAwakeMode: Equatable {
 
     static func durationTitle(_ seconds: TimeInterval) -> String {
         let minutes = Int(seconds / 60)
-        return minutes < 60 ? "\(minutes)분" : "\(minutes / 60)시간"
+        return minutes < 60 ? "\(minutes)분만 더" : "\(minutes / 60)시간만 더"
     }
 }
 

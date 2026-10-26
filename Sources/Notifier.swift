@@ -68,24 +68,24 @@ final class Notifier {
 
     private static func text(for kind: Kind) -> (String, String) {
         if case let .sessionEnded(name, remaining) = kind {
-            let tail = remaining > 0 ? " 다른 세션 \(remaining)개는 아직 돌고 있다." : ""
-            return ("아빠 잔다", "\(name) 세션이 끝나서 유지를 해제했다.\(tail)")
+            let tail = remaining > 0 ? " 다른 세션 \(remaining)개는 아직 돈다." : ""
+            return ("다 봤다", "\(name) 끝나서 껐다.\(tail)")
         }
         if case let .chargerUnplugged(isLidSettingOn) = kind {
-            return ("충전기가 빠졌다", Self.lidTail("배터리로 버티는 중이다.", isLidSettingOn))
+            return ("선 빠졌다", Self.lidTail("배터리로 버티는 중이다.", isLidSettingOn))
         }
         if case let .durationExpired(title, isLidSettingOn) = kind {
-            return ("시간이 다 됐다", Self.lidTail("\(title) 이 지나 유지를 해제했다.", isLidSettingOn))
+            return ("시간 다 됐다", Self.lidTail("\(title) 지나서 껐다.", isLidSettingOn))
         }
         if case let .batteryLow(percent, isLidSettingOn) = kind {
-            return ("배터리가 \(percent)% 다", Self.lidTail("유지를 해제했다.", isLidSettingOn))
+            return ("힘 빠졌다", Self.lidTail("배터리 \(percent)% 라 껐다.", isLidSettingOn))
         }
         return ("아빠안잔다", "")
     }
 
     private static func lidTail(_ body: String, _ isLidSettingOn: Bool) -> String {
         guard isLidSettingOn else { return body }
-        return body + " 앱은 해제했으나 뚜껑 닫힘 시스템 설정은 켜져 있다."
+        return body + " 뚜껑 닫힘 설정은 아직 켜져 있다."
     }
 
     private func deliver(title: String, body: String) {

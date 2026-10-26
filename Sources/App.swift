@@ -107,7 +107,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         menu.addItem(.separator())
 
         // 가장 자주 쓸 동작이라 맨 위에 둔다
-        let leaveItem = actionItem("화면 끄고 지키기", action: #selector(handleLeaveNow))
+        let leaveItem = actionItem("불 끄고 본다", action: #selector(handleLeaveNow))
         leaveItem.toolTip = "화면을 바로 끄고, 안 걸려 있으면 '끌 때까지' 로 켠다. 세션은 계속 돈다."
         menu.addItem(leaveItem)
 
@@ -115,7 +115,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
         // 다섯 항목이 한 질문의 답이라는 걸 제목으로 보인다
         menu.addItem(.sectionHeader(title: "언제까지 안 자나"))
-        menu.addItem(modeItem("끌 때까지", mode: .indefinite))
+        menu.addItem(modeItem("내가 끌 때까지", mode: .indefinite))
         for seconds in AppState.durationChoices {
             menu.addItem(modeItem(KeepAwakeMode.durationTitle(seconds), mode: .duration(seconds)))
         }
@@ -124,7 +124,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         menu.addItem(.separator())
 
         // 둘 다 "체크 = 이 문장이 사실" 로 읽히는 안전장치다
-        let batteryItem = checkItem("배터리 \(AppState.batteryThreshold)% 밑이면 잔다",
+        let batteryItem = checkItem("배터리 \(AppState.batteryThreshold)% 되면 잔다",
                                     isOn: state.releasesOnLowBattery,
                                     action: #selector(handleBatteryToggle))
         batteryItem.toolTip = "충전기가 빠진 채 배터리가 \(AppState.batteryThreshold)% 아래로 내려가면 유지를 스스로 푼다."
@@ -149,7 +149,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         if state.caffeinate.isRunning {
             menu.addItem(actionItem("이제 잔다", action: #selector(handleStop)))
         }
-        menu.addItem(actionItem("아이콘 읽는 법…", action: #selector(handleHelpClick)))
+        menu.addItem(actionItem("리모콘 설명서…", action: #selector(handleHelpClick)))
 
         let quit = actionItem("종료", action: #selector(handleQuit))
         quit.keyEquivalent = "q"
@@ -159,14 +159,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     /// 세션 수에 따라 모양이 셋이다 — 없음·하나(자동 선택)·여럿(서브메뉴)
     private func sessionItem() -> NSMenuItem {
         guard !state.sessions.isEmpty else {
-            return disabledItem("세션이 끝날 때까지 (실행 중 없음)")
+            return disabledItem("이것만 보고 잘게 (볼 게 없다)")
         }
         if state.sessions.count == 1, let only = state.recentSessions.first {
-            return modeItem("세션이 끝날 때까지 (\(only.name))",
+            return modeItem("이것만 보고 잘게 (\(only.name))",
                             mode: .session(pid: only.pid, name: only.name))
         }
 
-        let parent = NSMenuItem(title: "세션이 끝날 때까지", action: nil, keyEquivalent: "")
+        let parent = NSMenuItem(title: "이것만 보고 잘게", action: nil, keyEquivalent: "")
         let submenu = NSMenu()
         for session in state.recentSessions {
             submenu.addItem(modeItem(state.menuLabel(for: session),

@@ -19,7 +19,7 @@
 <tr>
 <td align="center"><img src="docs/images/state-sleeping.png" width="54"><br><b>잔다</b><br><sub>안 걸렸다</sub></td>
 <td align="center"><img src="docs/images/state-awake.png" width="54"><br><b>안 잔다</b><br><sub>깨워 두는 중</sub></td>
-<td align="center"><img src="docs/images/state-session.png" width="54"><br><b>세션 지키는 중</b><br><sub>끝나면 풀린다</sub></td>
+<td align="center"><img src="docs/images/state-session.png" width="54"><br><b>보는 중</b><br><sub>끝나면 풀린다</sub></td>
 <td align="center"><img src="docs/images/state-lid.png" width="54"><br><b>테두리</b><br><sub>뚜껑 설정 켜짐</sub></td>
 </tr>
 </table>
@@ -68,9 +68,9 @@ xattr -dr com.apple.quarantine /Applications/DadsWatchingThis.app
 
 | 항목 | 하는 일 |
 |---|---|
-| **화면 끄고 지키기** | 자리 비울 때 한 번으로. 유지를 켜고 화면을 끈다 |
+| **불 끄고 본다** | 자리 비울 때 한 번으로. 유지를 켜고 화면을 끈다 |
 | **언제까지 안 자나** | 끝나는 조건. 세션을 고르면 그게 끝날 때 풀린다 |
-| **배터리 20% 밑이면 잔다** | 충전기가 빠진 채 배터리가 줄면 스스로 푼다 |
+| **배터리 20% 되면 잔다** | 충전기가 빠진 채 배터리가 줄면 스스로 푼다 |
 | **뚜껑 닫아도 안 잔다** | 시스템 설정. 암호는 macOS 가 받는다 |
 | **메뉴바 경과 시간** | 아이콘 옆 숫자. 숨기거나 초까지 볼 수 있다 |
 
@@ -84,7 +84,7 @@ xattr -dr com.apple.quarantine /Applications/DadsWatchingThis.app
 
 <img src="docs/images/screenshot-sessions.png" width="280" align="right" alt="세션 목록">
 
-`세션이 끝날 때까지` 에 들어가면 **돌고 있는 Claude Code 세션 목록**이 나온다. 하나를 고르면 그 세션이 끝날 때 유지가 저절로 풀린다.
+`이것만 보고 잘게` 에 들어가면 **돌고 있는 Claude Code 세션 목록**이 나온다. 하나를 고르면 그 세션이 끝날 때 유지가 저절로 풀린다.
 
 폴더명과 경과 시간으로 구분하고, 그것까지 같으면 PID 뒷자리를 붙인다. 최근 12시간 안에 띄운 것만, 최대 8개까지 올라온다.
 
@@ -93,9 +93,9 @@ xattr -dr com.apple.quarantine /Applications/DadsWatchingThis.app
 ## 기능
 
 - [x] 메뉴바에서 상태 확인 — 3가지 모양 × 테두리
-- [x] 끝나는 조건 선택 — 끌 때까지 / 30분 / 1시간 / 2시간 / **세션이 끝날 때까지**
+- [x] 끝나는 조건 선택 — 내가 끌 때까지 / 30분·1시간·2시간만 더 / **이것만 보고 잘게**
 - [x] Claude Code 세션 목록에서 지목 (최근 12시간, 폴더명으로 구분)
-- [x] 화면 끄고 지키기
+- [x] 불 끄고 본다 — 화면을 끄면서 유지를 건다
 - [x] 뚜껑 닫힘 시스템 설정 읽기·쓰기
 - [x] 끊김 이력 — 자리 비운 사이 잠들었으면 시각과 사유
 - [x] 알림 3종 — 세션 종료 · 충전기 분리 · 배터리 해제

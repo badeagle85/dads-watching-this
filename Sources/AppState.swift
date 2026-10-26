@@ -77,7 +77,7 @@ final class AppState: ObservableObject {
     var statusText: String {
         guard let mode = caffeinate.mode else { return "잔다" }
         let elapsed = fullElapsedText.map { " · \($0)" } ?? ""
-        if case let .session(_, name) = mode { return "\(name) 지키는 중\(elapsed)" }
+        if case let .session(_, name) = mode { return "\(name) 보는 중\(elapsed)" }
         return "안 잔다\(elapsed)"
     }
 

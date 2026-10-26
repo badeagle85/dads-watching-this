@@ -4,13 +4,13 @@ import AppKit
 enum AwakeState: Hashable {
     case sleeping       // 잔다
     case awake          // 안 잔다
-    case keepingSession // 세션 지키는 중
+    case keepingSession // 보는 중
 }
 
 private let stateNames: [AwakeState: String] = [
     .sleeping: "잔다",
     .awake: "안 잔다",
-    .keepingSession: "세션 지키는 중",
+    .keepingSession: "보는 중",
 ]
 
 /**

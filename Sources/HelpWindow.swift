@@ -19,7 +19,7 @@ final class HelpWindow: NSObject {
                               styleMask: [.titled, .closable],
                               backing: .buffered,
                               defer: false)
-        window.title = "아이콘 읽는 법"
+        window.title = "리모콘 설명서"
         window.isReleasedWhenClosed = false
         window.contentViewController = NSHostingController(rootView: HelpView())
         window.center()
@@ -38,7 +38,7 @@ struct HelpView: View {
                         detail: "아무것도 안 걸렸다. 맥은 평소대로 잠든다.")
                     row(.awake, border: false, title: "안 잔다",
                         detail: "깨워 두는 중이다. 파동이 붙는다.")
-                    row(.keepingSession, border: false, title: "세션 지키는 중",
+                    row(.keepingSession, border: false, title: "보는 중",
                         detail: "고른 세션이 끝나면 저절로 풀린다. 속이 꽉 찬다.")
                 }
 
