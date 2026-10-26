@@ -4,12 +4,13 @@
 
 # 아빠안잔다
 
-**AI 세션이 도는 동안 맥을 안 재우는 macOS 메뉴바 앱**<br>
+**AI 세션이 도는 동안 맥을 안 재우는 메뉴바 앱**<br>
 지키고 있는지를 아이콘 모양만 보고 안다
 
 [![Release](https://img.shields.io/github/v/release/badeagle85/dads-watching-this?style=flat-square&color=2d4169)](https://github.com/badeagle85/dads-watching-this/releases/latest)
 [![Downloads](https://img.shields.io/github/downloads/badeagle85/dads-watching-this/total?style=flat-square&color=2d4169)](https://github.com/badeagle85/dads-watching-this/releases)
-![Platform](https://img.shields.io/badge/macOS-14%2B-2d4169?style=flat-square)
+![macOS](https://img.shields.io/badge/macOS-14%2B-2d4169?style=flat-square&logo=apple&logoColor=white)
+![Apple Silicon](https://img.shields.io/badge/Apple%20Silicon-2d4169?style=flat-square&logo=apple&logoColor=white)
 [![License](https://img.shields.io/github/license/badeagle85/dads-watching-this?style=flat-square&color=2d4169)](LICENSE)
 
 <table>
@@ -28,6 +29,16 @@
 ---
 
 Claude Code 를 돌려 놓고 자리를 비우면 **세션이 살아 있는지 알 수가 없다.** 돌아와 보면 끊겨 있고, 언제 왜 끊겼는지도 모른다. 그래서 만들었다.
+
+## 필요한 환경
+
+|  | |
+|---|---|
+| 운영체제 | **macOS 14 (Sonoma) 이상** |
+| 칩 | **Apple Silicon** (M1 이상). Intel 맥은 지원하지 않는다 |
+| Windows · Linux | **동작하지 않는다** |
+
+맥 전용이다. 맥이 자는 것을 막는 `caffeinate`, 전원 설정을 읽고 쓰는 `pmset`, 메뉴바에 아이콘을 다는 방식까지 전부 macOS 에만 있는 것들이라 다른 운영체제로 옮길 수 없다.
 
 ## 설치
 
