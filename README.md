@@ -59,6 +59,8 @@ xattr -dr com.apple.quarantine /Applications/DadsWatchingThis.app
 
 > [!IMPORTANT]
 > **네 번째 줄을 앱을 열기 전에 실행해야 한다.** 격리 딱지가 붙은 채로 열면 macOS 가 앱을 지우라고 권하고, 확인을 누르면 앱이 사라진다. 그때는 `brew reinstall --cask dads-watching-this` 로 다시 받는다.
+>
+> **이 네 줄은 처음 한 번만 필요하다.** 그 뒤로는 앱이 스스로 갱신한다.
 
 ## 메뉴
 
