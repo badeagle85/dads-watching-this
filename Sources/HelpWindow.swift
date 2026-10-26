@@ -54,6 +54,19 @@ struct HelpView: View {
                 section("테두리는 시스템 설정이다") {
                     row(.sleeping, border: true, title: "뚜껑 닫아도 안 잔다",
                         detail: "앱과 따로 논다. 앱을 꺼도, 재부팅해도 남는다. 세 모양 어디에나 붙을 수 있다.")
+
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("둘은 막는 범위가 다르다")
+                            .font(.callout.weight(.semibold))
+                        rangeRow("뚜껑 닫아도 안 잔다", "맥의 모든 잠을 막는다 — 가만둬도, 뚜껑을 닫아도 안 잔다")
+                        rangeRow("앱의 유지 모드", "가만둘 때의 잠만 막는다. 뚜껑을 닫으면 잔다")
+                        Text("그래서 테두리가 있는 동안은 유지 모드를 안 걸어도 맥이 안 잔다. 테두리를 끄면 다시 필요해진다.")
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    .padding(12)
+                    .background(.quaternary, in: RoundedRectangle(cornerRadius: 8))
                 }
 
                 section("아이콘 옆 숫자") {
@@ -124,6 +137,19 @@ struct HelpView: View {
             Spacer(minLength: 0)
         }
         .accessibilityElement(children: .combine)
+    }
+
+    private func rangeRow(_ name: String, _ detail: String) -> some View {
+        HStack(alignment: .top, spacing: 8) {
+            Text("·")
+            VStack(alignment: .leading, spacing: 1) {
+                Text(name).font(.callout.weight(.medium))
+                Text(detail)
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
     }
 
     private func detailRow(_ sample: String, _ meaning: String) -> some View {

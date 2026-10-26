@@ -104,6 +104,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         if let warning = state.warning {
             menu.addItem(disabledItem("⚠︎ \(warning)"))
         }
+        // 시스템 설정이 모든 잠을 막고 있으면, 앱의 유지 모드는 거들 뿐이다
+        if state.isLidSettingOn {
+            menu.addItem(disabledItem("뚜껑 설정이 켜져 있어 맥이 아예 안 잔다"))
+        }
         if let notice = updater.noticeText {
             let item = actionItem("⤓ \(notice)", action: #selector(handleUpdateClick))
             menu.addItem(item)
@@ -112,8 +116,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         menu.addItem(.separator())
 
         // 가장 자주 쓸 동작이라 맨 위에 둔다
-        let leaveItem = actionItem("불 끄고 본다", action: #selector(handleLeaveNow))
-        leaveItem.toolTip = "화면을 바로 끄고, 안 걸려 있으면 '끌 때까지' 로 켠다. 세션은 계속 돈다."
+        let leaveItem = actionItem("화면 끄고 계속 본다", action: #selector(handleLeaveNow))
+        leaveItem.toolTip = "화면을 바로 끄고, 안 걸려 있으면 '계속 본다' 로 켠다. 세션은 그대로 돈다."
         menu.addItem(leaveItem)
 
         menu.addItem(.separator())
@@ -128,7 +132,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
         menu.addItem(.separator())
 
-        // 둘 다 "체크 = 이 문장이 사실" 로 읽히는 안전장치다
+        // 위쪽은 '지금 얼마나', 여기는 '늘 이렇게' 다
+        menu.addItem(.sectionHeader(title: "설정"))
+
+        // 체크 = 이 문장이 사실 로 읽힌다
         let batteryItem = checkItem("배터리 \(AppState.batteryThreshold)% 되면 잔다",
                                     isOn: state.releasesOnLowBattery,
                                     action: #selector(handleBatteryToggle))

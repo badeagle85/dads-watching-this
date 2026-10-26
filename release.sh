@@ -17,40 +17,52 @@ fi
 
 TAP_DIR="../homebrew-tap"
 ZIP="build/release/DadsWatchingThis-$VERSION.zip"
+DMG="build/release/아빠안잔다-$VERSION.dmg"
 BUILD_NUMBER=$(/usr/bin/defaults read "$PWD/Resources/Info.plist" CFBundleVersion)
 NEXT_BUILD=$((BUILD_NUMBER + 1))
 
-echo "▸ 1/7  버전을 $VERSION (빌드 $NEXT_BUILD) 로 올린다"
+echo "▸ 1/8  버전을 $VERSION (빌드 $NEXT_BUILD) 로 올린다"
 /usr/bin/plutil -replace CFBundleShortVersionString -string "$VERSION" Resources/Info.plist
 /usr/bin/plutil -replace CFBundleVersion -string "$NEXT_BUILD" Resources/Info.plist
 
-echo "▸ 2/7  빌드와 테스트"
+echo "▸ 2/8  빌드와 테스트"
 ./build.sh > /dev/null
 ./test.sh | tail -1
 
-echo "▸ 3/7  압축"
+echo "▸ 3/8  압축 (Sparkle·brew 용)"
 mkdir -p build/release
 ditto -c -k --keepParent build/DadsWatchingThis.app "$ZIP"
 
-echo "▸ 4/7  appcast 서명"
+echo "▸ 4/8  dmg 만들기 (직접 받는 사람용)"
+STAGE="build/dmg-stage"
+/bin/rm -rf "$STAGE"
+mkdir -p "$STAGE"
+cp -R build/DadsWatchingThis.app "$STAGE/"
+ln -s /Applications "$STAGE/Applications"
+/bin/rm -f "$DMG"
+# hdiutil create 는 macOS 27 에서 deprecated 다
+diskutil image create from --format UDZO --volumeName "아빠안잔다 $VERSION" "$STAGE" "$DMG" > /dev/null
+/bin/rm -rf "$STAGE"
+
+echo "▸ 5/8  appcast 서명"
 ./Vendor/bin/generate_appcast \
   --download-url-prefix "https://github.com/badeagle85/dads-watching-this/releases/download/v$VERSION/" \
   -o docs/appcast.xml build/release 2>&1 | grep -v "mismatch code signing" || true
 
-echo "▸ 5/7  커밋과 태그"
+echo "▸ 6/8  커밋과 태그"
 git add -A
 git commit -q -m "chore: $VERSION"
 git tag "v$VERSION"
 git push -q origin main --tags
 
-echo "▸ 6/7  릴리스 업로드"
+echo "▸ 7/8  릴리스 업로드 (zip + dmg)"
 if [ -n "$NOTES_FILE" ]; then
-  gh release create "v$VERSION" "$ZIP" --title "$TITLE" --notes-file "$NOTES_FILE"
+  gh release create "v$VERSION" "$ZIP" "$DMG" --title "$TITLE" --notes-file "$NOTES_FILE"
 else
-  gh release create "v$VERSION" "$ZIP" --title "$TITLE" --generate-notes
+  gh release create "v$VERSION" "$ZIP" "$DMG" --title "$TITLE" --generate-notes
 fi
 
-echo "▸ 7/7  brew tap 갱신"
+echo "▸ 8/8  brew tap 갱신"
 SHA=$(shasum -a 256 "$ZIP" | cut -d' ' -f1)
 /usr/bin/sed -i '' "s/version \".*\"/version \"$VERSION\"/" "$TAP_DIR/Casks/dads-watching-this.rb"
 /usr/bin/sed -i '' "s/sha256 \".*\"/sha256 \"$SHA\"/" "$TAP_DIR/Casks/dads-watching-this.rb"
