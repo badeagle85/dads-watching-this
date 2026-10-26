@@ -9,13 +9,17 @@
 
 <img src="docs/images/banner.png" width="760" alt="소파에서 리모콘을 쥔 채 잠든 아빠 — '아빠 안 잔다…'">
 
+<a href="https://github.com/badeagle85/dads-watching-this/releases/latest/download/DadsWatchingThis.dmg"><img src="https://img.shields.io/badge/⬇%20다운로드-dmg%201.2MB-22A06B?style=for-the-badge&labelColor=0E3A2B" alt="다운로드" height="44"></a>
+
+<sub>macOS 14 이상 · Apple Silicon · 터미널을 쓴다면 <a href="#brew-로">brew</a> 쪽이 더 깔끔하다</sub>
+
+<br>
+
 [![Release](https://img.shields.io/github/v/release/badeagle85/dads-watching-this?style=flat-square&color=2d4169)](https://github.com/badeagle85/dads-watching-this/releases/latest)
 [![Downloads](https://img.shields.io/github/downloads/badeagle85/dads-watching-this/total?style=flat-square&color=2d4169)](https://github.com/badeagle85/dads-watching-this/releases)
 ![macOS](https://img.shields.io/badge/macOS-14%2B-2d4169?style=flat-square&logo=apple&logoColor=white)
 ![Apple Silicon](https://img.shields.io/badge/Apple%20Silicon-2d4169?style=flat-square&logo=apple&logoColor=white)
 [![License](https://img.shields.io/github/license/badeagle85/dads-watching-this?style=flat-square&color=2d4169)](LICENSE)
-
-[![다운로드](https://img.shields.io/badge/dmg%20내려받기-2d4169?style=for-the-badge&logo=apple&logoColor=white)](https://github.com/badeagle85/dads-watching-this/releases/latest/download/DadsWatchingThis.dmg)
 
 <table>
 <tr>
