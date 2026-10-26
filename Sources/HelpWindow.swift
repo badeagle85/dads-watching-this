@@ -60,7 +60,7 @@ struct HelpView: View {
 
                 Divider()
 
-                Text("메뉴바에서 아이콘이 안 보이면 오른쪽 끝 `»` 안에 접혀 있다. 메뉴바가 좁으면 macOS 가 뒤쪽부터 숨긴다.")
+                Text("메뉴바에서 아이콘이 안 보이면 오른쪽 끝 `»` 안에 접혀 있다. 메뉴바가 좁으면 macOS 가 뒤쪽부터 숨긴다.\n\n자동 업데이트가 켜져 있다. 하루 한 번 새 버전을 확인한다.")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
