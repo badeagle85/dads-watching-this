@@ -24,6 +24,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private static let fadeDuration = 0.12
 
     private let state = AppState()
+    private let updater = Updater()
     private var statusItem: NSStatusItem?
     private var stateObserver: AnyCancellable?
     private var isFading = false
@@ -103,6 +104,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         if let warning = state.warning {
             menu.addItem(disabledItem("⚠︎ \(warning)"))
         }
+        if let notice = updater.noticeText {
+            let item = actionItem("⤓ \(notice)", action: #selector(handleUpdateClick))
+            menu.addItem(item)
+        }
 
         menu.addItem(.separator())
 
@@ -150,6 +155,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             menu.addItem(actionItem("이제 잔다", action: #selector(handleStop)))
         }
         menu.addItem(actionItem("리모콘 설명서…", action: #selector(handleHelpClick)))
+        menu.addItem(actionItem("새 거 있나 보자…", action: #selector(handleUpdateClick)))
 
         let quit = actionItem("종료", action: #selector(handleQuit))
         quit.keyEquivalent = "q"
@@ -252,6 +258,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     @objc private func handleLidClick() { LidWindow.shared.show(state: state) }
     @objc private func handleStop() { state.stopByUser() }
     @objc private func handleHelpClick() { HelpWindow.shared.show() }
+    @objc private func handleUpdateClick() { updater.checkNow() }
     @objc private func handleQuit() { NSApp.terminate(nil) }
 }
 

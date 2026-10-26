@@ -1,0 +1,15 @@
+<?xml version="1.0" standalone="yes"?>
+<rss xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" version="2.0">
+    <channel>
+        <title>DadsWatchingThis</title>
+        <item>
+            <title>0.1.3</title>
+            <pubDate>Mon, 26 Oct 2026 12:37:53 +0900</pubDate>
+            <sparkle:version>4</sparkle:version>
+            <sparkle:shortVersionString>0.1.3</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+            <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
+            <enclosure url="https://github.com/badeagle85/dads-watching-this/releases/download/v0.1.3/DadsWatchingThis-0.1.3.zip" length="1413683" type="application/octet-stream" sparkle:edSignature="ZcNhkK8iAqfFEulZDP1FToJc6cXvi/4DBzmqfdPx3n+Wj1iLnFBl+EHE9OGnYpig74k/puaEoA6LRtL6EdeGBw=="/>
+        </item>
+    </channel>
+</rss>
