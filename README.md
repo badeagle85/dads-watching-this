@@ -100,8 +100,8 @@ xattr -dr com.apple.quarantine /Applications/DadsWatchingThis.app
 - [x] 끊김 이력 — 자리 비운 사이 잠들었으면 시각과 사유
 - [x] 알림 3종 — 세션 종료 · 충전기 분리 · 배터리 해제
 - [x] 배터리 20% 자동 해제 · 로그인 자동 실행 · 전역 단축키
+- [x] **자동 업데이트** — 앱이 스스로 새 버전을 받는다
 - [ ] 영어 (지금은 한국어만)
-- [ ] 자동 업데이트
 - [ ] 고른 세션이 끝나면 다른 세션으로 이관
 - [ ] Codex·Cursor 등 다른 에이전트 연동
 
@@ -142,6 +142,16 @@ sudo pmset -a disablesleep 0   # 되돌리기
 <summary><b>설치할 때 왜 명령을 네 줄이나 치나?</b></summary><br>
 
 **Apple 공증을 받지 않았다.** 연 $99 가 드는데, 사용자가 생기기 전에 연회비부터 내는 건 순서가 거꾸로라 보고 **소스 공개**를 택했다. `xattr` 은 "인터넷에서 받았다"는 표시를 떼는 것뿐이다. Homebrew 가 `--no-quarantine` 으로 해 주던 일인데 **7.0 에서 그 옵션이 제거됐다.**
+</details>
+
+<details>
+<summary><b>업데이트는 어떻게 되나?</b></summary><br>
+
+**앱이 스스로 확인하고 받는다.** 하루 한 번 배경에서 보고, 새 버전이 있으면 창으로 물어본다. 메뉴의 `새 거 있나 보자…` 로 직접 확인할 수도 있다.
+
+Apple 공증을 안 받았는데도 되는 이유는, Apple 서명 대신 **EdDSA 키 서명**으로 무결성을 확인하기 때문이다. 내려받은 앱의 격리 표시는 Sparkle 이 직접 떼므로 설치할 때 쓴 `xattr` 명령을 다시 칠 일이 없다.
+
+`brew upgrade` 를 따로 할 필요도 없다 — cask 에 `auto_updates` 로 표시해 둬서 Homebrew 가 버전 추적을 앱에 맡긴다.
 </details>
 
 <details>
