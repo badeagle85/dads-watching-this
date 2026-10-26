@@ -3,13 +3,27 @@
     <channel>
         <title>DadsWatchingThis</title>
         <item>
+            <title>0.1.6</title>
+            <pubDate>Mon, 26 Oct 2026 16:10:15 +0900</pubDate>
+            <sparkle:version>7</sparkle:version>
+            <sparkle:shortVersionString>0.1.6</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+            <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
+            <enclosure url="https://github.com/badeagle85/dads-watching-this/releases/download/v0.1.6/DadsWatchingThis-0.1.6.zip" length="1424337" type="application/octet-stream" sparkle:edSignature="h+4q11q0xB03rY8KS1OAGhdWRqfMHYnyZU0WFCG4R6SYq5JxDTcwSgog1frr8DYqFTQ9jgtjjgv16rX1YfL/CA=="/>
+            <sparkle:deltas>
+                <enclosure url="https://github.com/badeagle85/dads-watching-this/releases/download/v0.1.6/DadsWatchingThis7-6.delta" sparkle:deltaFrom="6" length="23402" type="application/octet-stream" sparkle:deltaFromSparkleExecutableSize="941872" sparkle:deltaFromSparkleLocales="de,he,ar,el,ja,fa,uk" sparkle:edSignature="XQHTBDnbkfZzadIaA5U44sWpx1bMqoBmeb6nWAfDf5/fanbIyWtapOkr+orhe7x1tnT54lcBZCwf1AyUHWDpBQ=="/>
+                <enclosure url="https://github.com/badeagle85/dads-watching-this/releases/download/v0.1.6/DadsWatchingThis7-5.delta" sparkle:deltaFrom="5" length="37826" type="application/octet-stream" sparkle:deltaFromSparkleExecutableSize="941872" sparkle:deltaFromSparkleLocales="de,he,ar,el,ja,fa,uk" sparkle:edSignature="HGppYzlL0secZYi8w7VtPXVIPH18TaWt+4dE2k6i+bnc6/ceqU7Fxj7FkOJ91rz/PYxDcRrOquW9ld/rWUKFCA=="/>
+                <enclosure url="https://github.com/badeagle85/dads-watching-this/releases/download/v0.1.6/DadsWatchingThis7-4.delta" sparkle:deltaFrom="4" length="37634" type="application/octet-stream" sparkle:deltaFromSparkleExecutableSize="941872" sparkle:deltaFromSparkleLocales="de,he,ar,el,ja,fa,uk" sparkle:edSignature="kW4g9FQ27gMtwRxJHx+hSDP+fvSW64SJUZMZjmt4oZojOK65Txoxx4KKI0PlB5RjqSI9haQSnsWlKiXpYW33DA=="/>
+            </sparkle:deltas>
+        </item>
+        <item>
             <title>0.1.5</title>
             <pubDate>Mon, 26 Oct 2026 15:00:25 +0900</pubDate>
             <sparkle:version>6</sparkle:version>
             <sparkle:shortVersionString>0.1.5</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
             <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
-            <enclosure url="https://github.com/badeagle85/dads-watching-this/releases/download/v0.1.5/DadsWatchingThis-0.1.5.zip" length="1420154" type="application/octet-stream" sparkle:edSignature="bARqhU3+x1chJNgag9HCqiVDUpsDilX5m60l5OgC7sv6XKez1fXbeVUvroSxO9hgzVRqDdfO1gDb8e4VZv1ADQ=="/>
+            <enclosure url="https://github.com/badeagle85/dads-watching-this/releases/download/v0.1.6/DadsWatchingThis-0.1.5.zip" length="1420154" type="application/octet-stream" sparkle:edSignature="bARqhU3+x1chJNgag9HCqiVDUpsDilX5m60l5OgC7sv6XKez1fXbeVUvroSxO9hgzVRqDdfO1gDb8e4VZv1ADQ=="/>
             <sparkle:deltas>
                 <enclosure url="https://github.com/badeagle85/dads-watching-this/releases/download/v0.1.5/DadsWatchingThis6-5.delta" sparkle:deltaFrom="5" length="31278" type="application/octet-stream" sparkle:deltaFromSparkleExecutableSize="941872" sparkle:deltaFromSparkleLocales="de,he,ar,el,ja,fa,uk" sparkle:edSignature="6fd23QW5Xc8YpyYeuuOF+fvuwETjiBhlEc30Nh+k2CVPTnYuNOx1PA49gf5PbOSw3Y+qvRgIbe0rgX3+dnxQBg=="/>
                 <enclosure url="https://github.com/badeagle85/dads-watching-this/releases/download/v0.1.5/DadsWatchingThis6-4.delta" sparkle:deltaFrom="4" length="31106" type="application/octet-stream" sparkle:deltaFromSparkleExecutableSize="941872" sparkle:deltaFromSparkleLocales="de,he,ar,el,ja,fa,uk" sparkle:edSignature="QWEwnQH/lDHqhO0H+Bco8XJoUDgU7tobyH7FGYtOJ22zYlRYB4A5eNHyfdwktl+0h9NB78fmKUtI/pZoMeLlCQ=="/>
@@ -22,19 +36,10 @@
             <sparkle:shortVersionString>0.1.4</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
             <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
-            <enclosure url="https://github.com/badeagle85/dads-watching-this/releases/download/v0.1.5/DadsWatchingThis-0.1.4.zip" length="1413790" type="application/octet-stream" sparkle:edSignature="QPi7Q4hm5oCooIIcYmA9wCZ/ykcidbdNgmnDyIiFIN6Yz3ZHRIPqdMJdQ50/DgF911yyOlPmiZ5fjptVvQ7dDg=="/>
+            <enclosure url="https://github.com/badeagle85/dads-watching-this/releases/download/v0.1.6/DadsWatchingThis-0.1.4.zip" length="1413790" type="application/octet-stream" sparkle:edSignature="QPi7Q4hm5oCooIIcYmA9wCZ/ykcidbdNgmnDyIiFIN6Yz3ZHRIPqdMJdQ50/DgF911yyOlPmiZ5fjptVvQ7dDg=="/>
             <sparkle:deltas>
                 <enclosure url="https://github.com/badeagle85/dads-watching-this/releases/download/v0.1.4/DadsWatchingThis5-4.delta" sparkle:deltaFrom="4" length="6190" type="application/octet-stream" sparkle:deltaFromSparkleExecutableSize="941872" sparkle:deltaFromSparkleLocales="de,he,ar,el,ja,fa,uk" sparkle:edSignature="SmWSAAw8+f9peWuHQ2QNBp7uO3Q0R8ps3c3T+DZ2QAaq+s8YyNSfi3sGsTUqjbFU3BugRLaPPrx903IEZ8fADA=="/>
             </sparkle:deltas>
-        </item>
-        <item>
-            <title>0.1.3</title>
-            <pubDate>Mon, 26 Oct 2026 12:37:53 +0900</pubDate>
-            <sparkle:version>4</sparkle:version>
-            <sparkle:shortVersionString>0.1.3</sparkle:shortVersionString>
-            <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
-            <enclosure url="https://github.com/badeagle85/dads-watching-this/releases/download/v0.1.5/DadsWatchingThis-0.1.3.zip" length="1413683" type="application/octet-stream" sparkle:edSignature="ZcNhkK8iAqfFEulZDP1FToJc6cXvi/4DBzmqfdPx3n+Wj1iLnFBl+EHE9OGnYpig74k/puaEoA6LRtL6EdeGBw=="/>
         </item>
     </channel>
 </rss>

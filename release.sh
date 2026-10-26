@@ -17,7 +17,7 @@ fi
 
 TAP_DIR="../homebrew-tap"
 ZIP="build/release/DadsWatchingThis-$VERSION.zip"
-DMG="build/release/아빠안잔다-$VERSION.dmg"
+DMG="build/dmg/아빠안잔다-$VERSION.dmg"
 BUILD_NUMBER=$(/usr/bin/defaults read "$PWD/Resources/Info.plist" CFBundleVersion)
 NEXT_BUILD=$((BUILD_NUMBER + 1))
 
@@ -34,6 +34,8 @@ mkdir -p build/release
 ditto -c -k --keepParent build/DadsWatchingThis.app "$ZIP"
 
 echo "▸ 4/8  dmg 만들기 (직접 받는 사람용)"
+# appcast 생성 폴더(build/release)와 분리한다 — 같이 두면 Sparkle 이 중복으로 본다
+mkdir -p build/dmg
 STAGE="build/dmg-stage"
 /bin/rm -rf "$STAGE"
 mkdir -p "$STAGE"
@@ -41,13 +43,19 @@ cp -R build/DadsWatchingThis.app "$STAGE/"
 ln -s /Applications "$STAGE/Applications"
 /bin/rm -f "$DMG"
 # hdiutil create 는 macOS 27 에서 deprecated 다
-diskutil image create from --format UDZO --volumeName "아빠안잔다 $VERSION" "$STAGE" "$DMG" > /dev/null
+diskutil image create from --format UDZO --volumeName "아빠안잔다 $VERSION" "$STAGE" "$DMG" > /dev/null 2>&1
 /bin/rm -rf "$STAGE"
 
 echo "▸ 5/8  appcast 서명"
 ./Vendor/bin/generate_appcast \
   --download-url-prefix "https://github.com/badeagle85/dads-watching-this/releases/download/v$VERSION/" \
-  -o docs/appcast.xml build/release 2>&1 | grep -v "mismatch code signing" || true
+  -o docs/appcast.xml build/release 2>&1 | grep -viE "mismatch code signing|deprecated" || true
+
+# appcast 에 이번 버전이 들어갔는지 확인한다 — 빠지면 자동 업데이트가 안 간다
+if ! grep -q "<sparkle:shortVersionString>$VERSION<" docs/appcast.xml; then
+  echo "✗ appcast 에 $VERSION 이 안 들어갔다. 멈춘다."
+  exit 1
+fi
 
 echo "▸ 6/8  커밋과 태그"
 git add -A
