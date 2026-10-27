@@ -47,6 +47,8 @@ diskutil image create from --format UDZO --volumeName "아빠안잔다 $VERSION"
 /bin/rm -rf "$STAGE"
 
 echo "▸ 5/8  appcast 서명"
+# build/release 의 과거 zip 은 delta 를 만드는 데 필요해서 남겨 둔다.
+# 그래서 접두사 하나가 옛 항목에도 붙는다 — 아래 trim 이 잘라낸다
 ./Vendor/bin/generate_appcast \
   --download-url-prefix "https://github.com/badeagle85/dads-watching-this/releases/download/v$VERSION/" \
   -o docs/appcast.xml build/release 2>&1 | grep -viE "mismatch code signing|deprecated" || true
@@ -56,6 +58,9 @@ if ! grep -q "<sparkle:shortVersionString>$VERSION<" docs/appcast.xml; then
   echo "✗ appcast 에 $VERSION 이 안 들어갔다. 멈춘다."
   exit 1
 fi
+
+# 최신 항목만 남긴다. 옛 항목은 zip URL 태그가 어긋나 404 가 된다 (2026-10-27)
+./Tools/trim-appcast.py docs/appcast.xml
 
 echo "▸ 6/8  커밋과 태그"
 git add -A
