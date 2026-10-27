@@ -9,7 +9,7 @@
 
 <img src="docs/images/banner.png" width="760" alt="소파에서 리모콘을 쥔 채 잠든 아빠 — '아빠 안 잔다…'">
 
-<a href="https://github.com/badeagle85/dads-watching-this/releases/latest/download/DadsWatchingThis.dmg"><img src="https://img.shields.io/badge/⬇%20다운로드-dmg%201.2MB-22A06B?style=for-the-badge&labelColor=0E3A2B" alt="다운로드" height="44"></a>
+<a href="https://github.com/badeagle85/dads-watching-this/releases/latest/download/DadsWatchingThis.dmg"><img src="https://img.shields.io/badge/⬇%20다운로드-dmg-22A06B?style=for-the-badge&labelColor=0E3A2B" alt="다운로드" height="44"></a>
 
 <sub>macOS 14 이상 · Apple Silicon · 터미널을 쓴다면 <a href="#brew-로">brew</a> 쪽이 더 깔끔하다</sub>
 
