@@ -3,17 +3,18 @@
     <channel>
         <title>DadsWatchingThis</title>
         <item>
-            <title>0.1.6</title>
-            <pubDate>Mon, 26 Oct 2026 16:10:15 +0900</pubDate>
-            <sparkle:version>7</sparkle:version>
-            <sparkle:shortVersionString>0.1.6</sparkle:shortVersionString>
+            <title>0.1.7</title>
+            <pubDate>Tue, 27 Oct 2026 11:55:33 +0900</pubDate>
+            <sparkle:version>8</sparkle:version>
+            <sparkle:shortVersionString>0.1.7</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
             <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
-            <enclosure url="https://github.com/badeagle85/dads-watching-this/releases/download/v0.1.6/DadsWatchingThis-0.1.6.zip" length="1424337" type="application/octet-stream" sparkle:edSignature="h+4q11q0xB03rY8KS1OAGhdWRqfMHYnyZU0WFCG4R6SYq5JxDTcwSgog1frr8DYqFTQ9jgtjjgv16rX1YfL/CA=="/>
+            <enclosure url="https://github.com/badeagle85/dads-watching-this/releases/download/v0.1.7/DadsWatchingThis-0.1.7.zip" length="1427120" type="application/octet-stream" sparkle:edSignature="j8SKhFhQa9rFOoLeX1/9ldgZu+STEWqUM6Esh+4UWPBCBCcVtoZSKmw+SbKJhAkqH0VpGyWVec/+gf3VvJ+3CQ=="/>
             <sparkle:deltas>
-                <enclosure url="https://github.com/badeagle85/dads-watching-this/releases/download/v0.1.6/DadsWatchingThis7-6.delta" sparkle:deltaFrom="6" length="23402" type="application/octet-stream" sparkle:deltaFromSparkleExecutableSize="941872" sparkle:deltaFromSparkleLocales="de,he,ar,el,ja,fa,uk" sparkle:edSignature="XQHTBDnbkfZzadIaA5U44sWpx1bMqoBmeb6nWAfDf5/fanbIyWtapOkr+orhe7x1tnT54lcBZCwf1AyUHWDpBQ=="/>
-                <enclosure url="https://github.com/badeagle85/dads-watching-this/releases/download/v0.1.6/DadsWatchingThis7-5.delta" sparkle:deltaFrom="5" length="37826" type="application/octet-stream" sparkle:deltaFromSparkleExecutableSize="941872" sparkle:deltaFromSparkleLocales="de,he,ar,el,ja,fa,uk" sparkle:edSignature="HGppYzlL0secZYi8w7VtPXVIPH18TaWt+4dE2k6i+bnc6/ceqU7Fxj7FkOJ91rz/PYxDcRrOquW9ld/rWUKFCA=="/>
-                <enclosure url="https://github.com/badeagle85/dads-watching-this/releases/download/v0.1.6/DadsWatchingThis7-4.delta" sparkle:deltaFrom="4" length="37634" type="application/octet-stream" sparkle:deltaFromSparkleExecutableSize="941872" sparkle:deltaFromSparkleLocales="de,he,ar,el,ja,fa,uk" sparkle:edSignature="kW4g9FQ27gMtwRxJHx+hSDP+fvSW64SJUZMZjmt4oZojOK65Txoxx4KKI0PlB5RjqSI9haQSnsWlKiXpYW33DA=="/>
+                <enclosure url="https://github.com/badeagle85/dads-watching-this/releases/download/v0.1.7/DadsWatchingThis8-7.delta" sparkle:deltaFrom="7" length="33766" type="application/octet-stream" sparkle:deltaFromSparkleExecutableSize="941872" sparkle:deltaFromSparkleLocales="de,he,ar,el,ja,fa,uk" sparkle:edSignature="yMjDuDLsHtlq4VJ/0ij14yr6MxYFEOLIE3+5nH38L9wJaX+m1W+rNRYbaMJKVxc70JuCz7DMd1MjH8X6IVDjDw=="/>
+                <enclosure url="https://github.com/badeagle85/dads-watching-this/releases/download/v0.1.7/DadsWatchingThis8-6.delta" sparkle:deltaFrom="6" length="41250" type="application/octet-stream" sparkle:deltaFromSparkleExecutableSize="941872" sparkle:deltaFromSparkleLocales="de,he,ar,el,ja,fa,uk" sparkle:edSignature="jXI3JAhlBctqjTpNadihK9yDnOz2H0sBlfO2ns+TtiZu3HDzqePv6t3uDAprALy6pFmKqZdNl+7OdOoQnu/UDw=="/>
+                <enclosure url="https://github.com/badeagle85/dads-watching-this/releases/download/v0.1.7/DadsWatchingThis8-5.delta" sparkle:deltaFrom="5" length="49350" type="application/octet-stream" sparkle:deltaFromSparkleExecutableSize="941872" sparkle:deltaFromSparkleLocales="de,he,ar,el,ja,fa,uk" sparkle:edSignature="W7IDb07yauzVgn/8WcBq4Fw1OiwoQev7FAXt614ofajXNVVupGnG1fE3Jz+VLpwjNBmiYQPXAvtIjgDN9OSnAw=="/>
+                <enclosure url="https://github.com/badeagle85/dads-watching-this/releases/download/v0.1.7/DadsWatchingThis8-4.delta" sparkle:deltaFrom="4" length="49338" type="application/octet-stream" sparkle:deltaFromSparkleExecutableSize="941872" sparkle:deltaFromSparkleLocales="de,he,ar,el,ja,fa,uk" sparkle:edSignature="qYxTm0vRA8cNzYW+L4N0Yfv1Ek1dtbpJC5bawjthqBwDRhEkD/YX4uKRlZnuQhOrLroI6ZjEjL08r0zu+uGfCw=="/>
             </sparkle:deltas>
         </item>
     </channel>
