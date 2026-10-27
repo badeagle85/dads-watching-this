@@ -48,6 +48,26 @@ func caffeinateArguments() -> [String] {
     return []
 }
 
+/// 떠 있는 caffeinate 자식의 PID. 밖에서 죽는 경우를 흉내 내는 데 쓴다.
+@MainActor
+func caffeinateChildPIDs() -> [Int32] {
+    let process = Process()
+    process.executableURL = URL(fileURLWithPath: "/bin/ps")
+    process.arguments = ["-axo", "pid=,ppid=,args="]
+    let pipe = Pipe()
+    process.standardOutput = pipe
+    try? process.run()
+    let data = pipe.fileHandleForReading.readDataToEndOfFile()
+    process.waitUntilExit()
+    let text = String(data: data, encoding: .utf8) ?? ""
+    let ownPID = String(ProcessInfo.processInfo.processIdentifier)
+    return text.split(separator: "\n").compactMap { line in
+        let parts = line.split(separator: " ", omittingEmptySubsequences: true).map(String.init)
+        guard parts.count > 3, parts[1] == ownPID, parts[2].hasSuffix("caffeinate") else { return nil }
+        return Int32(parts[0])
+    }
+}
+
 @MainActor
 func wait(_ seconds: Double) async {
     try? await Task.sleep(nanoseconds: UInt64(seconds * 1_000_000_000))
@@ -126,6 +146,36 @@ func run() async -> Int32 {
     harness.check("#12 세션이 끝나면 자동 해제", state.state == .sleeping)
     harness.check("#12 caffeinate 도 사라진다", caffeinateArguments().isEmpty)
 
+    print("\n── 해제를 알릴지 (shouldAnnounce) ──")
+    // 이름만 뒤집고 동작이 반대가 되는 자리라 기본값까지 못 박는다
+    let releases = Caffeinate()
+    var announced: [Bool] = []
+    releases.onRelease = { _, shouldAnnounce in announced.append(shouldAnnounce) }
+
+    releases.start(mode: .indefinite)
+    await wait(0.4)
+    releases.stop(shouldAnnounce: false)
+    await wait(0.6)
+    harness.check("사용자가 끈 해제는 알리지 않는다", announced == [false], "\(announced)")
+
+    let watched = Process()
+    watched.executableURL = URL(fileURLWithPath: "/bin/sleep")
+    watched.arguments = ["60"]
+    try? watched.run()
+    await wait(0.2)
+    releases.start(mode: .session(pid: watched.processIdentifier, name: "알림테스트"))
+    await wait(0.4)
+    watched.terminate()
+    await wait(1.0)
+    harness.check("세션이 끝난 해제는 알린다", announced == [false, true], "\(announced)")
+
+    // 기본값이 '안 알린다' 로 뒤집히면 여기서 걸린다
+    releases.start(mode: .indefinite)
+    await wait(0.4)
+    for pid in caffeinateChildPIDs() { kill(pid, SIGTERM) }
+    await wait(1.0)
+    harness.check("밖에서 죽은 caffeinate 도 알린다", announced == [false, true, true], "\(announced)")
+
     print("\n── 로그인 항목 (B4) ──")
     harness.check("#B4 상태를 읽을 수 있다", state.isLoginItemEnabled == LoginItem.isEnabled)
 
@@ -145,6 +195,19 @@ func run() async -> Int32 {
         harness.check("#30 유지보수 잠은 제외된다", found.reason != "유지보수", found.reason)
         print("     → 마지막 잠: \(found.noteText)")
     }
+
+    print("\n── 알림 권한 대기줄 ──")
+    // 권한 응답이 오기 전에 보낸 알림이 조용히 버려지면 안 된다.
+    // 하네스는 번들이 아니라 '거부' 로 즉시 확정된다 — 콜백이 빠지지 않는지를 본다.
+    // 허용된 실제 번들에서의 비동기 경로는 `DWT_SELFTEST=1` 자가 진단이 확인한다.
+    let notifier = Notifier()
+    var results: [Bool] = []
+    notifier.post(.sessionEnded(name: "첫째", remaining: 0)) { results.append($0) }
+    notifier.post(.chargerUnplugged(isLidSettingOn: false)) { results.append($0) }
+    notifier.post(.batteryLow(percent: 19, isLidSettingOn: false)) { results.append($0) }
+    harness.check("연달아 보낸 알림이 모두 결과를 받는다", results.count == 3, "\(results.count)개")
+    harness.check("권한을 모르는 동안은 보냈다고 하지 않는다", results.allSatisfy { $0 == false })
+    harness.check("권한 미확정은 isAuthorized 가 false", !notifier.isAuthorized)
 
     print("\n── 아이콘 (상태 정의 3×2) ──")
     let states: [AwakeState] = [.sleeping, .awake, .keepingSession]

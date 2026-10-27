@@ -11,8 +11,22 @@ final class Notifier {
         case batteryLow(percent: Int, isLidSettingOn: Bool)
     }
 
-    private(set) var isAuthorized = false
-    private var hasAskedAuthorization = false
+    /// 권한 응답은 비동기로 온다. 아직 모르는 상태와 거부된 상태를 구분해야 알림을 안 버린다.
+    private enum Authorization {
+        case unknown
+        case asking
+        case decided(isGranted: Bool)
+    }
+
+    private var authorization: Authorization = .unknown
+    /// 응답을 기다리는 사이에 온 알림들. 응답이 오면 한꺼번에 흘려보낸다.
+    private var waitingForAuthorization: [(Bool) -> Void] = []
+
+    /// 권한이 **허용으로 확정됐을 때만** true. 아직 모르는 동안은 false다 — 경고 표시에 쓰지 말 것.
+    var isAuthorized: Bool {
+        guard case let .decided(isGranted) = authorization else { return false }
+        return isGranted
+    }
 
     /// 지금 권한이 어떤 상태인지 — 자가 진단용
     func currentStatus(_ completion: @escaping (String) -> Void) {
@@ -58,12 +72,15 @@ final class Notifier {
     /// 거부당했을 때를 위해 메뉴 상단에 띄울 한 줄. G4 추천안.
     private(set) var pendingWarning: String?
 
-    func clearWarning() { pendingWarning = nil }
+    /**
+     알림을 띄운다.
 
-    func post(_ kind: Kind) {
+     - Parameter onResult: 실제로 알림 센터에 넣었는지. 권한 응답을 기다린 뒤에 불린다.
+     */
+    func post(_ kind: Kind, onResult: ((Bool) -> Void)? = nil) {
         let (title, body) = Self.text(for: kind)
         pendingWarning = body
-        deliver(title: title, body: body)
+        deliver(title: title, body: body, onResult: onResult)
     }
 
     private static func text(for kind: Kind) -> (String, String) {
@@ -88,22 +105,47 @@ final class Notifier {
         return body + " 뚜껑 닫힘 설정은 아직 켜져 있다."
     }
 
-    private func deliver(title: String, body: String) {
-        requestAuthorizationIfNeeded()
-        guard isAuthorized else { return }
+    private func deliver(title: String, body: String, onResult: ((Bool) -> Void)? = nil) {
         let content = UNMutableNotificationContent()
         content.title = title
         content.body = body
         let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
-        UNUserNotificationCenter.current().add(request)
+
+        // 권한 응답을 기다린다. 먼저 거르면 앱을 켠 직후에 온 알림이 조용히 사라진다
+        requestAuthorizationIfNeeded { isGranted in
+            if isGranted { UNUserNotificationCenter.current().add(request) }
+            onResult?(isGranted)
+        }
     }
 
-    /// 앱 시작이 아니라 첫 유지 시작 때 묻는다 — 쓰지도 않을 권한을 먼저 요구하지 않는다.
-    func requestAuthorizationIfNeeded() {
-        guard !hasAskedAuthorization, Bundle.main.bundleIdentifier != nil else { return }
-        hasAskedAuthorization = true
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { [weak self] granted, _ in
-            Task { @MainActor in self?.isAuthorized = granted }
+    /**
+     앱 시작이 아니라 첫 유지 시작 때 묻는다 — 쓰지도 않을 권한을 먼저 요구하지 않는다.
+
+     - Parameter completion: 허용 여부. 이미 정해졌으면 곧바로, 묻는 중이면 응답이 온 뒤에 불린다.
+     */
+    func requestAuthorizationIfNeeded(_ completion: ((Bool) -> Void)? = nil) {
+        if case let .decided(isGranted) = authorization {
+            completion?(isGranted)
+            return
         }
+        if let completion { waitingForAuthorization.append(completion) }
+
+        guard case .unknown = authorization else { return } // 이미 묻는 중이면 대기줄에만 넣는다
+        guard Bundle.main.bundleIdentifier != nil else {
+            settleAuthorization(isGranted: false)
+            return
+        }
+
+        authorization = .asking
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { [weak self] granted, _ in
+            Task { @MainActor in self?.settleAuthorization(isGranted: granted) }
+        }
+    }
+
+    private func settleAuthorization(isGranted: Bool) {
+        authorization = .decided(isGranted: isGranted)
+        let waiting = waitingForAuthorization
+        waitingForAuthorization = []
+        for report in waiting { report(isGranted) }
     }
 }

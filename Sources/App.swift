@@ -28,6 +28,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private var statusItem: NSStatusItem?
     private var stateObserver: AnyCancellable?
     private var isFading = false
+    private var hasPendingIconUpdate = false
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
@@ -53,9 +54,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         guard let button = statusItem?.button else { return }
         let icon = MenuBarIcon.image(for: state.state, isLidWarningOn: state.isLidSettingOn)
 
+        // 페이드가 끝나면 옛 아이콘을 다시 그린다. 그 사이의 변경은 끝난 뒤 한 번 더 반영한다
+        guard !isFading else {
+            hasPendingIconUpdate = true
+            return
+        }
+
         // 아이콘 모양이 바뀔 때만 페이드한다 — 경과 시간이 바뀌는 것으로는 깜빡이지 않는다
         let didShapeChange = button.image !== icon
-        guard didShapeChange, !isFading, !NSWorkspace.shared.accessibilityDisplayShouldReduceMotion else {
+        guard didShapeChange, !NSWorkspace.shared.accessibilityDisplayShouldReduceMotion else {
             apply(icon, to: button)
             return
         }
@@ -72,10 +79,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
                     context.duration = Self.fadeDuration
                     button.animator().alphaValue = 1
                 } completionHandler: {
-                    Task { @MainActor in self.isFading = false }
+                    Task { @MainActor in self.finishFade() }
                 }
             }
         }
+    }
+
+    private func finishFade() {
+        isFading = false
+        guard hasPendingIconUpdate else { return }
+        hasPendingIconUpdate = false
+        updateStatusItem()
     }
 
     private func apply(_ icon: NSImage, to button: NSStatusBarButton) {

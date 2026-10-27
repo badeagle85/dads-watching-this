@@ -44,13 +44,14 @@ final class Caffeinate: ObservableObject {
     @Published private(set) var mode: KeepAwakeMode?
     @Published private(set) var startedAt: Date?
 
-    /// 해제됐을 때 불린다. 사용자가 끈 경우에만 `wasExpected == true`.
-    var onRelease: ((_ mode: KeepAwakeMode, _ wasExpected: Bool) -> Void)?
+    /// 해제됐을 때 불린다. `shouldAnnounce` 는 이 해제를 알림으로 알려야 하는지.
+    var onRelease: ((_ mode: KeepAwakeMode, _ shouldAnnounce: Bool) -> Void)?
 
     private var task: Process?
     private var expiryTimer: Timer?
     private var sessionWatcher: DispatchSourceProcess?
-    private var isStoppingByUser = false
+    /// 기본은 알린다 — 밖에서 caffeinate 가 죽은 것도 사용자는 알아야 한다
+    private var shouldAnnounceRelease = true
 
     var isRunning: Bool { mode != nil }
 
@@ -87,7 +88,7 @@ final class Caffeinate: ObservableObject {
         task = process
         self.mode = mode
         startedAt = Date()
-        isStoppingByUser = false
+        shouldAnnounceRelease = true
 
         if case let .duration(seconds) = mode {
             scheduleExpiry(after: seconds)
@@ -97,12 +98,18 @@ final class Caffeinate: ObservableObject {
         }
     }
 
-    func stop(byUser: Bool) {
+    /**
+     유지를 해제한다.
+
+     - Parameter shouldAnnounce: 이 해제를 알림으로 알릴지.
+       사용자가 끈 것·부르는 쪽이 직접 알리는 것은 false 로 둬서 알림이 겹치지 않게 한다.
+     */
+    func stop(shouldAnnounce: Bool) {
         guard let process = task, process.isRunning else {
             clearState()
             return
         }
-        isStoppingByUser = byUser
+        shouldAnnounceRelease = shouldAnnounce
         process.terminate()
     }
 
@@ -118,7 +125,7 @@ final class Caffeinate: ObservableObject {
 
     private func scheduleExpiry(after seconds: TimeInterval) {
         expiryTimer = Timer.scheduledTimer(withTimeInterval: seconds, repeats: false) { [weak self] _ in
-            Task { @MainActor in self?.stop(byUser: false) }
+            Task { @MainActor in self?.stop(shouldAnnounce: true) }
         }
     }
 
@@ -126,7 +133,7 @@ final class Caffeinate: ObservableObject {
     private func watchSession(pid: Int32) {
         let source = DispatchSource.makeProcessSource(identifier: pid, eventMask: .exit, queue: .main)
         source.setEventHandler { [weak self] in
-            Task { @MainActor in self?.stop(byUser: false) }
+            Task { @MainActor in self?.stop(shouldAnnounce: true) }
         }
         source.resume()
         sessionWatcher = source
@@ -134,10 +141,10 @@ final class Caffeinate: ObservableObject {
 
     private func handleTermination() {
         let releasedMode = mode
-        let wasExpected = isStoppingByUser
+        let shouldAnnounce = shouldAnnounceRelease
         clearState()
         guard let releasedMode else { return }
-        onRelease?(releasedMode, wasExpected)
+        onRelease?(releasedMode, shouldAnnounce)
     }
 
     private func clearState() {
@@ -148,6 +155,6 @@ final class Caffeinate: ObservableObject {
         task = nil
         mode = nil
         startedAt = nil
-        isStoppingByUser = false
+        shouldAnnounceRelease = true
     }
 }

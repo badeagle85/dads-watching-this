@@ -67,15 +67,23 @@ enum Display {
     /**
      화면만 끈다. 모니터 전원만 내리는 것이라 세션·시스템은 그대로 돈다.
      시스템 설정에서 "화면이 꺼진 뒤 암호 요구" 가 켜져 있으면 결과적으로 잠긴다.
+
+     - Parameter onResult: 껐는지 여부. 끝날 때까지 기다리지 않고 메인 스레드에서 돌려준다.
      */
-    @discardableResult
-    static func sleepNow() -> Bool {
+    static func sleepNow(_ onResult: @escaping @MainActor (Bool) -> Void) {
         let process = Process()
         process.executableURL = URL(fileURLWithPath: "/usr/bin/pmset")
         process.arguments = ["displaysleepnow"]
-        do { try process.run() } catch { return false }
-        process.waitUntilExit()
-        return process.terminationStatus == 0
+        process.terminationHandler = { finished in
+            let isOff = finished.terminationStatus == 0
+            Task { @MainActor in onResult(isOff) }
+        }
+        do {
+            try process.run()
+        } catch {
+            NSLog("화면 끄기 실패: \(error.localizedDescription)")
+            Task { @MainActor in onResult(false) }
+        }
     }
 }
 

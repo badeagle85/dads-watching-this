@@ -15,29 +15,6 @@ final class AppState: ObservableObject {
     @Published private(set) var elapsedText: String?
     @Published private(set) var isLidSettingOn = LidSleepSetting.isOn
     @Published private(set) var sessions: [ClaudeSession] = []
-
-    /// 12시간 안에 띄운 것만 기본 목록에 올린다 (케이스 16)
-    var recentSessions: [ClaudeSession] {
-        let cutoff = Date().addingTimeInterval(-SessionScanner.recentWindow)
-        let recent = sessions.filter { $0.startedAt > cutoff }
-        // 전부 오래됐으면 빈 서브메뉴를 보여주지 않고 있는 것을 올린다
-        return Array((recent.isEmpty ? sessions : recent).prefix(SessionScanner.menuLimit))
-    }
-
-    /// 기본 목록에 안 올라간 나머지 — `모두 보기…` 로 들어간다 (케이스 16·17)
-    var olderSessions: [ClaudeSession] {
-        let shown = Set(recentSessions.map(\.pid))
-        return sessions.filter { !shown.contains($0.pid) }
-    }
-
-    /// 폴더명과 경과 시간이 같은 세션이 있으면 PID 를 붙여 구분한다 (케이스 15, B6)
-    func menuLabel(for session: ClaudeSession) -> String {
-        let base = "\(session.name) · \(session.elapsedText)"
-        let isAmbiguous = sessions.contains {
-            $0.pid != session.pid && $0.name == session.name && $0.elapsedText == session.elapsedText
-        }
-        return isAmbiguous ? "\(base) (\(session.pid))" : base
-    }
     @Published private(set) var sleptWhileAwayNote: String?
     @Published private(set) var warning: String?
     @Published private(set) var lidError: String?
@@ -66,6 +43,31 @@ final class AppState: ObservableObject {
     private var wasPluggedIn = Battery.current()?.isPluggedIn ?? true
 
     var mode: KeepAwakeMode? { caffeinate.mode }
+
+    // MARK: 세션 목록
+
+    /// 12시간 안에 띄운 것만 기본 목록에 올린다 (케이스 16)
+    var recentSessions: [ClaudeSession] {
+        let cutoff = Date().addingTimeInterval(-SessionScanner.recentWindow)
+        let recent = sessions.filter { $0.startedAt > cutoff }
+        // 전부 오래됐으면 빈 서브메뉴를 보여주지 않고 있는 것을 올린다
+        return Array((recent.isEmpty ? sessions : recent).prefix(SessionScanner.menuLimit))
+    }
+
+    /// 기본 목록에 안 올라간 나머지 — `모두 보기…` 로 들어간다 (케이스 16·17)
+    var olderSessions: [ClaudeSession] {
+        let shown = Set(recentSessions.map(\.pid))
+        return sessions.filter { !shown.contains($0.pid) }
+    }
+
+    /// 폴더명과 경과 시간이 같은 세션이 있으면 PID 를 붙여 구분한다 (케이스 15, B6)
+    func menuLabel(for session: ClaudeSession) -> String {
+        let base = "\(session.name) · \(session.elapsedText)"
+        let isAmbiguous = sessions.contains {
+            $0.pid != session.pid && $0.name == session.name && $0.elapsedText == session.elapsedText
+        }
+        return isAmbiguous ? "\(base) (\(session.pid))" : base
+    }
 
     var state: AwakeState {
         guard let mode = caffeinate.mode else { return .sleeping }
@@ -100,8 +102,8 @@ final class AppState: ObservableObject {
         elapsedDisplay = ElapsedDisplay(rawValue: defaults.string(forKey: Key.elapsedDisplay) ?? "")
             ?? .minutes
 
-        caffeinate.onRelease = { [weak self] mode, wasExpected in
-            self?.handleRelease(mode: mode, wasExpected: wasExpected)
+        caffeinate.onRelease = { [weak self] mode, shouldAnnounce in
+            self?.handleRelease(mode: mode, shouldAnnounce: shouldAnnounce)
         }
         powerWatcher = PowerWatcher { [weak self] in self?.handlePowerChange() }
         hotKey = HotKey { [weak self] in self?.toggle() }
@@ -115,7 +117,12 @@ final class AppState: ObservableObject {
 
     // MARK: 메뉴에서 부르는 것
 
-    /// 메뉴를 여는 순간에만 읽는다 (케이스 7·14, G1).
+    /**
+     메뉴를 여는 순간에만 읽는다 (케이스 7·14, G1).
+
+     scan 은 65ms 쯤 걸리지만 동기로 둔다 — `menuWillOpen` 은 기다려 주지 않으므로
+     백그라운드로 돌리면 세션 서브메뉴가 빈 채로 떴다가 뒤늦게 채워진다.
+     */
     func refreshForMenuOpen() {
         isLidSettingOn = LidSleepSetting.isOn
         isLoginItemEnabled = LoginItem.isEnabled
@@ -131,17 +138,11 @@ final class AppState: ObservableObject {
 
     /// `DWT_SELFTEST=1` 로 띄웠을 때만 돈다. 권한 응답을 기다렸다가 알림 3종을 보낸다.
     func runNotificationSelfTest() {
-        notifier.requestAuthorizationIfNeeded()
         notifier.currentStatus { status in
             NSLog("[자가진단] 알림 권한: %@", status)
         }
-        Task { @MainActor in
-            try? await Task.sleep(nanoseconds: 3_000_000_000)
-            notifier.currentStatus { status in
-                NSLog("[자가진단] 권한 응답 후: %@", status)
-            }
-            notifier.runSelfTest()
-        }
+        // 권한 응답을 기다리지 않고 곧바로 보낸다 — 대기줄이 도는지가 확인할 대상이다
+        notifier.runSelfTest()
     }
 
     func refreshLidSetting() {
@@ -164,12 +165,14 @@ final class AppState: ObservableObject {
     /// 자리를 비울 때 한 번으로 끝낸다 — 유지를 켜고 화면을 끈다.
     func leaveNow() {
         if !caffeinate.isRunning { start(mode: .indefinite) }
-        guard !Display.sleepNow() else { return }
-        warning = "화면을 끄지 못했다"
+        Display.sleepNow { [weak self] isOff in
+            guard let self, !isOff else { return }
+            self.warning = "화면을 끄지 못했다"
+        }
     }
 
     func stopByUser() {
-        caffeinate.stop(byUser: true)
+        caffeinate.stop(shouldAnnounce: false)
     }
 
     func toggle() {
@@ -186,13 +189,16 @@ final class AppState: ObservableObject {
 
     // MARK: 내부
 
-    private func handleRelease(mode: KeepAwakeMode, wasExpected: Bool) {
+    private func handleRelease(mode: KeepAwakeMode, shouldAnnounce: Bool) {
         stopElapsedTimer()
-        guard !wasExpected else { return }
+        guard shouldAnnounce else { return }
 
         if case let .session(pid, name) = mode {
-            let remaining = SessionScanner.scan().filter { $0.pid != pid }.count
-            notify(.sessionEnded(name: name, remaining: remaining))
+            // scan 은 ps·lsof 를 띄워 65ms 쯤 걸린다. 여기는 기다릴 화면이 없으니 메인 스레드를 비운다
+            Task.detached(priority: .utility) {
+                let remaining = SessionScanner.scan().filter { $0.pid != pid }.count
+                await MainActor.run { self.notify(.sessionEnded(name: name, remaining: remaining)) }
+            }
             return
         }
         if case .duration = mode {
@@ -210,14 +216,17 @@ final class AppState: ObservableObject {
 
         let isBelowThreshold = !battery.isPluggedIn && battery.percent <= Self.batteryThreshold
         guard releasesOnLowBattery, isBelowThreshold, caffeinate.isRunning else { return }
-        caffeinate.stop(byUser: true) // 해제 자체는 의도된 것이라 중복 알림을 막는다
+        caffeinate.stop(shouldAnnounce: false) // 배터리 해제는 바로 아래에서 직접 알린다
         stopElapsedTimer()
         notify(.batteryLow(percent: battery.percent, isLidSettingOn: LidSleepSetting.isOn))
     }
 
     private func notify(_ kind: Notifier.Kind) {
-        notifier.post(kind)
-        warning = notifier.isAuthorized ? nil : notifier.pendingWarning
+        // 권한 응답이 온 뒤에 판정한다 — 묻는 중에 읽으면 보냈는데도 경고가 뜬다
+        notifier.post(kind) { [weak self] isDelivered in
+            guard let self else { return }
+            self.warning = isDelivered ? nil : self.notifier.pendingWarning
+        }
     }
 
     /**
